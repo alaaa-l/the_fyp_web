@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Appointments | OpportuGrow</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0d3b2a;
+            --accent: #52b788;
+            --light-bg: #f4f7f6;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            font-family: 'Inter', sans-serif;
+            padding-top: 80px;
+        }
+
+        .manage-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .table {
+            vertical-align: middle;
+        }
+
+        .btn-approve {
+            background: var(--accent);
+            color: white;
+            border-radius: 8px;
+            font-weight: 600;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            transition: 0.3s;
+        }
+
+        .btn-approve:hover {
+            background: #40916c;
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        .btn-reject {
+            background: #e63946;
+            color: white;
+            border-radius: 8px;
+            font-weight: 600;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            transition: 0.3s;
+        }
+
+        .btn-reject:hover {
+            background: #d62828;
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        .status-badge {
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .badge-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-12">
+                <nav aria-label="breadcrumb" class="mb-4">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a th:href="@{/consultants/dashboard}">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Manage Appointments</li>
+                    </ol>
+                </nav>
+
+                <div class="manage-card">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3 class="fw-bold m-0" style="color: var(--primary)">Pending Appointments</h3>
+                        <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill"
+                            th:text="${#lists.size(appointments)} + ' Request(s)'">0 Requests</span>
+                    </div>
+
+                    <div th:if="${param.success == 'approved'}" class="alert alert-success alert-dismissible fade show"
+                        role="alert">
+                        Appointment approved successfully!
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    <div th:if="${param.success == 'rejected'}" class="alert alert-warning alert-dismissible fade show"
+                        role="alert">
+                        Appointment rejected.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover border-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="border-0 px-4">Member</th>
+                                    <th class="border-0">Date & Time</th>
+                                    <th class="border-0">Duration</th>
+                                    <th class="border-0">Topic</th>
+                                    <th class="border-0">Status</th>
+                                    <th class="border-0 text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="appointment : ${appointments}">
+                                    <td class="px-4">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="bg-light rounded-circle d-flex align-items-center justify-content-center"
+                                                style="width: 40px; height: 40px;">
+                                                <i class="fas fa-user text-muted"></i>
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold" th:text="${appointment.user.name}">Member Name
+                                                </div>
+                                                <div class="small text-muted" th:text="${appointment.user.email}">
+                                                    email@member.com</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div th:text="${#temporals.format(appointment.date, 'MMM dd, yyyy')}">Date</div>
+                                        <div class="small text-muted" th:text="${appointment.time}">Time</div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-dark fw-normal px-2 py-1"
+                                            th:text="${appointment.duration} + ' mins'">30 mins</span>
+                                    </td>
+                                    <td th:text="${appointment.topic}">Topic description</td>
+                                    <td>
+                                        <span class="status-badge badge-pending">PENDING</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="d-flex justify-content-center gap-2">
+                                            <form
+                                                th:action="@{'/consultant/appointments/' + ${appointment.id} + '/approve'}"
+                                                method="post">
+                                                <button type="submit" class="btn-approve">Approve</button>
+                                            </form>
+                                            <form
+                                                th:action="@{'/consultant/appointments/' + ${appointment.id} + '/reject'}"
+                                                method="post">
+                                                <button type="submit" class="btn-reject">Reject</button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div th:if="${#lists.isEmpty(appointments)}" class="text-center py-5">
+                        <i class="fas fa-calendar-check fa-4x mb-3 text-muted opacity-25"></i>
+                        <h5 class="text-muted">No pending requests</h5>
+                        <p class="small text-secondary">Check back later for new booking requests.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

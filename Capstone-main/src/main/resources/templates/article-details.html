@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${article.title} + ' | OpportuGrow'">Article Details</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0d3b2a;
+            --accent: #52b788;
+            --light-bg: #f4f7f6;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            font-family: 'Inter', sans-serif;
+            padding-top: 80px;
+        }
+
+        .details-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .article-type {
+            background: var(--accent);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .meta-info {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+        }
+
+        .content-area {
+            line-height: 1.8;
+            color: #444;
+            margin-bottom: 3rem;
+            white-space: pre-wrap;
+        }
+
+        .btn-download {
+            background: var(--primary);
+            color: white;
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            font-weight: 600;
+            border: none;
+            transition: 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-download:hover {
+            background: #08251a;
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        .back-link {
+            color: #888;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 2rem;
+            transition: 0.3s;
+        }
+
+        .back-link:hover {
+            color: var(--accent);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <a th:href="@{/articles}" class="back-link">
+                    <i class="fas fa-arrow-left"></i> Back to Hub
+                </a>
+
+                <div class="details-card shadow-sm">
+                    <span class="article-type" th:text="${article.type}">Category</span>
+                    <h1 class="display-5 fw-bold mb-3" th:text="${article.title}">Article Title</h1>
+
+                    <div class="meta-info d-flex align-items-center gap-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fas fa-user-circle text-muted"></i>
+                            <span th:text="${article.consultant.name}">Consultant Name</span>
+                        </div>
+                        <span>•</span>
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="far fa-calendar-alt text-muted"></i>
+                            <span th:text="${#temporals.format(article.uploadedAt, 'MMMM dd, yyyy')}">Date</span>
+                        </div>
+                    </div>
+
+                    <div class="content-area" th:text="${article.content}">
+                        Article content goes here...
+                    </div>
+
+                    <div class="d-grid d-md-block">
+                        <!-- Check if it's a PDF/Local File or an External Link -->
+                        <div
+                            th:if="${article.type.toString() == 'PDF' or article.type.toString() == 'SLIDES' or article.type.toString() == 'LECTURE'}">
+                            <a th:href="@{'/member/articles/' + ${article.id} + '/download'}" class="btn-download">
+                                <i class="fas fa-download"></i> Download Resource
+                            </a>
+                        </div>
+                        <div th:if="${article.type.toString() == 'LINK' or article.type.toString() == 'VIDEO'}">
+                            <a th:href="${article.fileUrl}" target="_blank" class="btn-download">
+                                <i class="fas fa-external-link-alt"></i> Open Resource
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
