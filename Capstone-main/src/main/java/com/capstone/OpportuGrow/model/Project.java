@@ -13,13 +13,9 @@ import java.util.Set;
 public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;//bde es2l chatgpt
+    private int id;// bde es2l chatgpt
     @ManyToMany
-    @JoinTable(
-            name = "project_likes",
-            joinColumns = @JoinColumn(name = "project_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
+    @JoinTable(name = "project_likes", joinColumns = @JoinColumn(name = "project_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Set<User> likedUsers = new HashSet<>();
 
     public Set<User> getLikedUsers() {
@@ -29,6 +25,7 @@ public class Project {
     public void setLikedUsers(Set<User> likedUsers) {
         this.likedUsers = likedUsers;
     }
+
     // زيد هاي فوق مع الـ Attributes
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Comment> comments;
@@ -41,6 +38,7 @@ public class Project {
     public void setComments(List<Comment> comments) {
         this.comments = comments;
     }
+
     @Transient
     private boolean likedByCurrentUser;
 
@@ -136,8 +134,6 @@ public class Project {
     @ElementCollection
     private List<String> galleryUrls;
 
-
-
     private String videoUrl;
     @Enumerated(EnumType.STRING)
     private ProjectStatus status;
@@ -147,6 +143,7 @@ public class Project {
     private Consultant consultant;
     @Transient // ما نخزنها بالـ DB
     private double fundingPercent;
+
     // مثال حساب fundingPercent قبل الإرسال للـ template
     public void calculateFundingPercent() {
         if (this.fundingGoal > 0) {
@@ -156,9 +153,13 @@ public class Project {
         }
     }
 
+    public double getFundingPercent() {
+        return fundingPercent;
+    }
 
-    public double getFundingPercent() { return fundingPercent; }
-    public void setFundingPercent(double fundingPercent) { this.fundingPercent = fundingPercent; }
+    public void setFundingPercent(double fundingPercent) {
+        this.fundingPercent = fundingPercent;
+    }
 
     public Consultant getConsultant() {
         return consultant;
@@ -215,6 +216,7 @@ public class Project {
     public void setStatus(ProjectStatus status) {
         this.status = status;
     }
+
     @Transient
     public String getOwnerFullName() {
         return owner != null ? owner.getName() : "Unknown";
@@ -224,9 +226,6 @@ public class Project {
     public int getLikesCount() {
         return likedUsers != null ? likedUsers.size() : 0;
     }
-
-
-
 
     @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)
@@ -312,4 +311,3 @@ public class Project {
         this.amountFunded = amountFunded;
     }
 }
-

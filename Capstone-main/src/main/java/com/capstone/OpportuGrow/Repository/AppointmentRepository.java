@@ -9,15 +9,16 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
     List<Appointment> findByConsultantId(int consultantId);
+
+    List<Appointment> findByUserId(int userId);
+
     boolean existsByConsultantIdAndDateAndTime(
             Long consultantId,
             LocalDate date,
-            LocalTime time
-    );
-
-
+            LocalTime time);
 
 }

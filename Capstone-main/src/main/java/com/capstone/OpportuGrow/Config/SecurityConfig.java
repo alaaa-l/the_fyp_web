@@ -40,6 +40,8 @@ public class SecurityConfig {
                                                 .permitAll()
                                                 .requestMatchers("/api/consultants/**")
                                                 .authenticated()
+                                                .requestMatchers("/api/appointments/**")
+                                                .authenticated()
                                                 .requestMatchers("/api/projects/**")
                                                 .authenticated()
                                                 .requestMatchers(

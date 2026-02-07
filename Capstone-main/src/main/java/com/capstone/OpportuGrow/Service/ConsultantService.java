@@ -3,6 +3,9 @@ package com.capstone.OpportuGrow.Service;
 import com.capstone.OpportuGrow.Dto.ConsultantCreateDto;
 import com.capstone.OpportuGrow.Repository.ConsultantRepository;
 import com.capstone.OpportuGrow.Repository.UserRepository;
+import com.capstone.OpportuGrow.Dto.AvailabilityDto;
+import com.capstone.OpportuGrow.Repository.AvailabilityRepository;
+import com.capstone.OpportuGrow.model.Availability;
 import com.capstone.OpportuGrow.model.Consultant;
 import com.capstone.OpportuGrow.model.Role;
 import com.capstone.OpportuGrow.model.User;
@@ -22,13 +25,16 @@ public class ConsultantService {
 
     private final UserRepository userRepository;
     private final ConsultantRepository consultantRepository;
+    private final AvailabilityRepository availabilityRepository;
     private final PasswordEncoder passwordEncoder;
 
     public ConsultantService(UserRepository userRepository,
             ConsultantRepository consultantRepository,
+            AvailabilityRepository availabilityRepository,
             PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.consultantRepository = consultantRepository;
+        this.availabilityRepository = availabilityRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -70,6 +76,18 @@ public class ConsultantService {
     public Optional<ConsultantDto> getConsultantById(Long id) {
         return consultantRepository.findById(id)
                 .map(this::mapToDto);
+    }
+
+    public List<AvailabilityDto> getConsultantAvailability(Long consultantId) {
+        Consultant consultant = consultantRepository.findById(consultantId)
+                .orElseThrow(() -> new RuntimeException("Consultant not found"));
+
+        return availabilityRepository.findByConsultant(consultant).stream()
+                .map(a -> new AvailabilityDto(
+                        a.getDay().toString(),
+                        a.getStartTime(),
+                        a.getEndTime()))
+                .collect(Collectors.toList());
     }
 
     public ConsultantDto mapToDto(Consultant consultant) {

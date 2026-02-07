@@ -1,5 +1,6 @@
 package com.capstone.OpportuGrow.Controller;
 
+import com.capstone.OpportuGrow.Dto.AvailabilityDto;
 import com.capstone.OpportuGrow.Dto.ConsultantDto;
 import com.capstone.OpportuGrow.Service.ConsultantService;
 import org.springframework.http.ResponseEntity;
@@ -27,5 +28,10 @@ public class ApiConsultantController {
         return consultantService.getConsultantById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/{id}/availability")
+    public ResponseEntity<List<AvailabilityDto>> getConsultantAvailability(@PathVariable Long id) {
+        return ResponseEntity.ok(consultantService.getConsultantAvailability(id));
     }
 }

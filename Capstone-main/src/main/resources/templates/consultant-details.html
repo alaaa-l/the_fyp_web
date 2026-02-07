@@ -156,40 +156,51 @@
                     <div class="row g-0">
                         <div class="col-md-7 border-end">
                             <div class="p-4 p-lg-5">
-                                <h4 class="fw-bold mb-4"><i class="fas fa-calendar-alt me-2 text-success"></i>Select an
-                                    Available Slot</h4>
-                                <div class="slots-grid" th:if="${not #lists.isEmpty(consultant.availableSlots)}">
-                                    <div th:each="slot : ${consultant.availableSlots}" class="slot-btn"
-                                        th:classappend="${slot.booked} ? 'booked' : ''" th:data-date="${slot.date}"
-                                        th:data-time="${slot.time}" onclick="selectSlot(this)">
-                                        <strong th:text="${slot.time}">10:00</strong>
-                                        <div class="small opacity-75"
-                                            th:text="${#temporals.format(slot.date, 'MMM dd')}">Date</div>
+                                <h4 class="fw-bold mb-4"><i class="fas fa-clock me-2 text-success"></i>Working Hours
+                                </h4>
+
+                                <div class="mb-4" th:if="${not #lists.isEmpty(availabilities)}">
+                                    <div th:each="avail : ${availabilities}"
+                                        class="d-flex justify-content-between border-bottom py-2">
+                                        <span class="fw-bold" th:text="${avail.day}">MONDAY</span>
+                                        <span class="text-muted">
+                                            <span th:text="${avail.startTime}">09:00</span> - <span
+                                                th:text="${avail.endTime}">17:00</span>
+                                        </span>
                                     </div>
                                 </div>
-                                <div class="text-center py-5" th:if="${#lists.isEmpty(consultant.availableSlots)}">
+
+                                <div class="text-center py-5" th:if="${#lists.isEmpty(availabilities)}">
                                     <i class="fas fa-calendar-times fa-3x mb-3 text-muted opacity-25"></i>
-                                    <p class="text-muted">No available slots at the moment.</p>
+                                    <p class="text-muted">No availability set by this consultant.</p>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-5">
                             <form th:action="@{/appointments/book}" method="post" class="booking-form">
                                 <input type="hidden" name="consultantId" th:value="${consultant.id}">
-                                <input type="hidden" name="date" id="inputDate">
-                                <input type="hidden" name="time" id="inputTime">
 
-                                <div class="mb-4">
-                                    <label class="form-label">Selected Appointment</label>
-                                    <div id="selectionSummary" class="p-3 bg-light rounded border small">
-                                        <span class="text-muted">Please select a time slot on the left.</span>
-                                    </div>
+                                <div th:if="${error}" class="alert alert-danger mb-3">
+                                    <i class="fas fa-exclamation-circle me-1"></i> <span th:text="${error}">Error
+                                        message</span>
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="duration" class="form-label">Duration (minutes)</label>
-                                    <input type="number" name="duration" id="duration" class="form-control" value="30"
-                                        min="15" step="15" required>
+                                    <label for="date" class="form-label">Date</label>
+                                    <input type="date" name="date" id="date" class="form-control" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="time" class="form-label">Start Time</label>
+                                    <input type="time" name="time" id="time" class="form-control" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="duration" class="form-label">Duration</label>
+                                    <select name="duration" id="duration" class="form-select" required>
+                                        <option value="30">30 Minutes</option>
+                                        <option value="50">50 Minutes</option>
+                                    </select>
                                 </div>
 
                                 <div class="mb-3">
@@ -198,7 +209,7 @@
                                         placeholder="What would you like to discuss?" required>
                                 </div>
 
-                                <button type="submit" class="book-btn" id="confirmBtn" disabled>
+                                <button type="submit" class="book-btn">
                                     Confirm & Book Now
                                 </button>
                             </form>
@@ -210,29 +221,10 @@
     </div>
 
     <script>
-        function selectSlot(el) {
-            if (el.classList.contains('booked')) return;
-
-            document.querySelectorAll('.slot-btn').forEach(s => s.classList.remove('selected'));
-            el.classList.add('selected');
-
-            const date = el.dataset.date;
-            const time = el.dataset.time;
-
-            document.getElementById('inputDate').value = date;
-            document.getElementById('inputTime').value = time;
-
-            document.getElementById('selectionSummary').innerHTML = `
-            <div class="d-flex justify-content-between mb-1">
-                <span class="text-muted">Date:</span> <strong>${date}</strong>
-            </div>
-            <div class="d-flex justify-content-between">
-                <span class="text-muted">Time:</span> <strong>${time}</strong>
-            </div>
-        `;
-
-            document.getElementById('confirmBtn').disabled = false;
-        }
+        // Set min date to today
+        const dateInput = document.getElementById('date');
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.setAttribute('min', today);
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

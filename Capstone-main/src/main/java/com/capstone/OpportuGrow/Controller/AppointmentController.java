@@ -1,22 +1,20 @@
 package com.capstone.OpportuGrow.Controller;
 
-import com.capstone.OpportuGrow.Dto.Slot;
-import com.capstone.OpportuGrow.Repository.AvailabilityRepository;
-import com.capstone.OpportuGrow.model.*;
 import com.capstone.OpportuGrow.Repository.AppointmentRepository;
+import com.capstone.OpportuGrow.Repository.AvailabilityRepository;
 import com.capstone.OpportuGrow.Repository.ConsultantRepository;
 import com.capstone.OpportuGrow.Repository.UserRepository;
-import lombok.RequiredArgsConstructor;
+import com.capstone.OpportuGrow.model.*;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 public class AppointmentController {
@@ -52,9 +50,9 @@ public class AppointmentController {
         Consultant consultant = consultantRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid consultant Id"));
 
-        consultant.setAvailableSlots(generateAvailableSlots(consultant));
-
+        List<Availability> availabilities = availabilityRepository.findByConsultant(consultant);
         model.addAttribute("consultant", consultant);
+        model.addAttribute("availabilities", availabilities);
         return "consultant-details";
     }
 
@@ -65,7 +63,8 @@ public class AppointmentController {
             @RequestParam Integer duration,
             @RequestParam String topic,
             Principal principal,
-            Model model) {
+            Model model,
+            RedirectAttributes redirectAttributes) {
 
         Consultant consultant = consultantRepository.findById(consultantId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid consultant Id"));
@@ -74,8 +73,45 @@ public class AppointmentController {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        if (duration != 30 && duration != 50) {
+            redirectAttributes.addFlashAttribute("error", "Duration must be either 30 or 50 minutes.");
+            return "redirect:/member/consultants/" + consultantId;
+        }
+
         LocalDate localDate = LocalDate.parse(date);
         LocalTime localTime = LocalTime.parse(time);
+        LocalTime endTime = localTime.plusMinutes(duration);
+
+        // 1️⃣ Check General Availability (Working Hours)
+        List<Availability> availabilities = availabilityRepository.findByConsultantAndDay(
+                consultant, localDate.getDayOfWeek());
+
+        boolean isWithinWorkingHours = availabilities.stream()
+                .anyMatch(avg -> (localTime.equals(avg.getStartTime()) || localTime.isAfter(avg.getStartTime()))
+                        && (endTime.equals(avg.getEndTime()) || endTime.isBefore(avg.getEndTime())));
+
+        if (!isWithinWorkingHours) {
+            redirectAttributes.addFlashAttribute("error",
+                    "The selected time is outside the consultant's working hours.");
+            return "redirect:/member/consultants/" + consultantId;
+        }
+
+        // 2️⃣ Check for conflicts with APPROVED appointments
+        boolean hasConflict = appointmentRepository.findByConsultantId(consultant.getId()).stream()
+                .filter(a -> a.getStatus() == AppointmentStatus.APPROVED)
+                .filter(a -> a.getDate().equals(localDate))
+                .anyMatch(a -> {
+                    LocalTime aStart = a.getTime();
+                    LocalTime aEnd = aStart.plusMinutes(a.getDuration());
+                    // Check intersection: (StartReq < EndExist) and (EndReq > StartExist)
+                    return localTime.isBefore(aEnd) && endTime.isAfter(aStart);
+                });
+
+        if (hasConflict) {
+            redirectAttributes.addFlashAttribute("error",
+                    "This time slot conflicts with an existing approved appointment.");
+            return "redirect:/member/consultants/" + consultantId;
+        }
 
         Appointment appointment = new Appointment();
         appointment.setConsultant(consultant);
@@ -135,30 +171,4 @@ public class AppointmentController {
         return "redirect:/consultant/appointments?success=rejected";
     }
 
-    private List<Slot> generateAvailableSlots(Consultant consultant) {
-        List<Slot> slots = new ArrayList<>();
-        for (int day = 0; day < 5; day++) {
-            LocalDate date = LocalDate.now().plusDays(day);
-            List<Availability> availabilities = availabilityRepository.findByConsultantAndDay(
-                    consultant, date.getDayOfWeek());
-            for (Availability availability : availabilities) {
-                LocalTime time = availability.getStartTime();
-                while (time.isBefore(availability.getEndTime())) {
-                    LocalTime tempTime = time;
-                    boolean isTaken = appointmentRepository.findByConsultantId(consultant.getId())
-                            .stream()
-                            .anyMatch(a -> a.getDate().equals(date) && a.getTime().equals(tempTime));
-                    if (!isTaken) {
-                        Slot newSlot = new Slot();
-                        newSlot.setTime(tempTime);
-                        newSlot.setDate(date);
-                        newSlot.setBooked(false);
-                        slots.add(newSlot);
-                    }
-                    time = time.plusHours(1);
-                }
-            }
-        }
-        return slots;
-    }
 }
