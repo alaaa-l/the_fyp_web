@@ -16,4 +16,5 @@ public class ConsultantDto {
     private String specialty;
     private boolean active;
     private UserResponseDto user;
+    private String profileImage;
 }

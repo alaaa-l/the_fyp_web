@@ -28,7 +28,7 @@ public class ProjectService {
         Project project = new Project();
         project.setTitle(dto.getTitle());
         project.setShortDescription(dto.getShortDescription());
-        project.setLongDescription(dto.getLongDescription());
+        project.setProjectStory(dto.getProjectStory());
         project.setCategory(dto.getCategory());
         project.setFundingGoal(dto.getFundingGoal());
         project.setFundingDuration(dto.getFundingDuration());
@@ -38,6 +38,7 @@ public class ProjectService {
         project.setType(dto.getType());
         project.setPhoneNumber(dto.getPhoneNumber());
         project.setAddress(dto.getAddress());
+        project.setUrgent(dto.isUrgent());
         project.setCreatedAt(new java.util.Date());
 
         // Fee Calculation

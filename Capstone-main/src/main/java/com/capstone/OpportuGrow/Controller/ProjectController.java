@@ -1,12 +1,10 @@
 package com.capstone.OpportuGrow.Controller;
 
-import com.capstone.OpportuGrow.model.Project;
-import com.capstone.OpportuGrow.model.ProjectStatus;
 import com.capstone.OpportuGrow.model.ProjectType;
 import com.capstone.OpportuGrow.model.User;
-import com.capstone.OpportuGrow.Repository.ProjectRepository;
 import com.capstone.OpportuGrow.Repository.UserRepository;
 import com.capstone.OpportuGrow.Dto.ProjectRegisterDto;
+import com.capstone.OpportuGrow.Service.ProjectService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,35 +14,35 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.File;
 import java.math.BigDecimal;
 import java.security.Principal;
-import java.util.Date;
-import java.util.List;
 import java.util.Optional;
-
 
 @Controller
 @RequestMapping("/create-project")
 public class ProjectController {
 
     private final UserRepository userRepository;
-    private final ProjectRepository projectRepository;
+    private final ProjectService projectService;
 
-    public ProjectController(UserRepository userRepository, ProjectRepository projectRepository) {
+    public ProjectController(UserRepository userRepository,
+            ProjectService projectService) {
         this.userRepository = userRepository;
-        this.projectRepository = projectRepository;
+        this.projectService = projectService;
     }
+
     // ================= Step 0: Choose Type =================
     @GetMapping("/choose-type")
     public String showChooseType() {
         return "choose-project-type"; // اسم الصفحة
     }
+
     @PostMapping("/choose-type")
     public String selectType(@RequestParam("type") ProjectType type, HttpSession session) {
         if (type == null) {
             return "redirect:/create-project/choose-type";
         }
-        ProjectRegisterDto projectRegister =
-                (ProjectRegisterDto) session.getAttribute("projectRegister");
-        if (projectRegister == null) projectRegister = new ProjectRegisterDto();
+        ProjectRegisterDto projectRegister = (ProjectRegisterDto) session.getAttribute("projectRegister");
+        if (projectRegister == null)
+            projectRegister = new ProjectRegisterDto();
 
         projectRegister.setType(type);
         session.setAttribute("projectRegister", projectRegister);
@@ -56,7 +54,8 @@ public class ProjectController {
     @GetMapping("/step1")
     public String showStep1(Model model, HttpSession session) {
         ProjectRegisterDto projectRegister = (ProjectRegisterDto) session.getAttribute("projectRegister");
-        if (projectRegister == null) projectRegister = new ProjectRegisterDto();
+        if (projectRegister == null)
+            projectRegister = new ProjectRegisterDto();
         model.addAttribute("projectRegister", projectRegister);
         return "create-project-step1";
     }
@@ -64,13 +63,14 @@ public class ProjectController {
     @PostMapping("/step1")
     public String saveStep1(@ModelAttribute ProjectRegisterDto projectRegisterForm, HttpSession session) {
         ProjectRegisterDto projectRegister = (ProjectRegisterDto) session.getAttribute("projectRegister");
-        if (projectRegister == null) projectRegister = new ProjectRegisterDto();
+        if (projectRegister == null)
+            projectRegister = new ProjectRegisterDto();
 
         projectRegister.setTitle(projectRegisterForm.getTitle());
         projectRegister.setShortDescription(projectRegisterForm.getShortDescription());
-        projectRegister.setLongDescription(projectRegisterForm.getLongDescription());
+        projectRegister.setProjectStory(projectRegisterForm.getProjectStory());
         projectRegister.setCategory(projectRegisterForm.getCategory());
-
+        projectRegister.setUrgent(projectRegisterForm.isUrgent());
 
         session.setAttribute("projectRegister", projectRegister);
         return "redirect:/create-project/step2";
@@ -80,7 +80,8 @@ public class ProjectController {
     @GetMapping("/step2")
     public String showStep2(Model model, HttpSession session) {
         ProjectRegisterDto projectRegister = (ProjectRegisterDto) session.getAttribute("projectRegister");
-        if (projectRegister == null) return "redirect:/create-project/step1";
+        if (projectRegister == null)
+            return "redirect:/create-project/step1";
         model.addAttribute("projectRegister", projectRegister);
         return "create-project-step2";
     }
@@ -88,7 +89,8 @@ public class ProjectController {
     @PostMapping("/step2")
     public String saveStep2(@ModelAttribute ProjectRegisterDto projectRegisterForm, HttpSession session) {
         ProjectRegisterDto projectRegister = (ProjectRegisterDto) session.getAttribute("projectRegister");
-        if (projectRegister == null) projectRegister = new ProjectRegisterDto();
+        if (projectRegister == null)
+            projectRegister = new ProjectRegisterDto();
 
         projectRegister.setFundingGoal(projectRegisterForm.getFundingGoal());
         projectRegister.setFundingDuration(projectRegisterForm.getFundingDuration());
@@ -97,8 +99,7 @@ public class ProjectController {
         BigDecimal platformFee = goal.multiply(new BigDecimal("0.05"));
         BigDecimal processingFee = goal.multiply(new BigDecimal("0.029"));
 
-        BigDecimal receive =
-                goal.subtract(platformFee).subtract(processingFee);
+        BigDecimal receive = goal.subtract(platformFee).subtract(processingFee);
 
         projectRegister.setPlatformFee(platformFee);
         projectRegister.setProcessingFee(processingFee);
@@ -114,17 +115,17 @@ public class ProjectController {
     @GetMapping("/step3")
     public String showStep3(Model model, HttpSession session) {
         ProjectRegisterDto projectRegister = (ProjectRegisterDto) session.getAttribute("projectRegister");
-        if (projectRegister == null) return "redirect:/create-project/step1";
+        if (projectRegister == null)
+            return "redirect:/create-project/step1";
         model.addAttribute("projectRegister", projectRegister);
         return "create-project-step3";
     }
 
     @PostMapping("/step3")
     public String saveStep3(@ModelAttribute ProjectRegisterDto projectRegisterForm,
-                            HttpSession session) {
+            HttpSession session) {
 
-        ProjectRegisterDto projectRegister =
-                (ProjectRegisterDto) session.getAttribute("projectRegister");
+        ProjectRegisterDto projectRegister = (ProjectRegisterDto) session.getAttribute("projectRegister");
 
         if (projectRegister == null) {
             projectRegister = new ProjectRegisterDto();
@@ -139,7 +140,8 @@ public class ProjectController {
                         projectRegisterForm.getImageFile().getOriginalFilename();
 
                 File dir = new File(uploadDir);
-                if (!dir.exists()) dir.mkdirs();
+                if (!dir.exists())
+                    dir.mkdirs();
 
                 File destination = new File(uploadDir + fileName);
                 projectRegisterForm.getImageFile().transferTo(destination);
@@ -156,15 +158,12 @@ public class ProjectController {
         return "redirect:/create-project/step4";
     }
 
-
-
-
-
     // ================= Step 4: Review & Submit =================
     @GetMapping("/step4")
     public String showStep4(Model model, HttpSession session) {
         ProjectRegisterDto projectRegister = (ProjectRegisterDto) session.getAttribute("projectRegister");
-        if (projectRegister == null) return "redirect:/create-project/step1";
+        if (projectRegister == null)
+            return "redirect:/create-project/step1";
         model.addAttribute("projectRegister", projectRegister);
         return "create-project-step4";
     }
@@ -191,29 +190,8 @@ public class ProjectController {
             return "redirect:/create-project/choose-type";
         }
 
-        // إنشاء المشروع
-        Project project = new Project();
-        project.setTitle(projectRegister.getTitle());
-        project.setShortDescription(projectRegister.getShortDescription());
-        project.setLongDescription(projectRegister.getLongDescription());
-        project.setCategory(projectRegister.getCategory());
-        project.setFundingGoal(projectRegister.getFundingGoal());
-        project.setFundingDuration(projectRegister.getFundingDuration());
-        project.setImageUrl(projectRegister.getImageUrl());
-        project.setOwner(user);
-        project.setStatus(ProjectStatus.PENDING);
-        project.setType(projectRegister.getType());
-        project.setPlatformFee(projectRegister.getPlatformFee());
-        project.setProcessingFee(projectRegister.getProcessingFee());
-        project.setAmountYouWillReceive(projectRegister.getAmountYouWillReceive());
-        project.setPhoneNumber(projectRegister.getPhoneNumber());
-        project.setAddress(projectRegister.getAddress());
-        // تاريخ الإنشاء
-        project.setCreatedAt(new Date());
-        projectRepository.countByStatus(ProjectStatus.PENDING);
-
-        // حفظ المشروع
-        projectRepository.save(project);
+        // Create project using service logic
+        projectService.createProject(projectRegister, user);
 
         // تنظيف session
         session.removeAttribute("projectRegister");
@@ -222,14 +200,9 @@ public class ProjectController {
         return "redirect:/";
     }
 
-
-
     // Shortcut to go directly to step1
     @GetMapping
     public String showCreateProjectForm() {
         return "redirect:/create-project/step1";
     }
 }
-
-
-

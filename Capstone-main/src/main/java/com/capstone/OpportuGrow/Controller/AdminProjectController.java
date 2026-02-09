@@ -36,12 +36,17 @@ public class AdminProjectController {
         model.addAttribute("project", project);
         return "admin-projects-view"; // هذا اسم ملف الـ HTML الجديد
     }
+
     @PostMapping("/projects/delete/{id}")
-    public String deleteProject(@PathVariable Long id) {
-        projectRepository.deleteById(id);
+    public String deleteProject(@PathVariable Long id,
+            org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+        try {
+            projectRepository.deleteById(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Project deleted successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to delete project: " + e.getMessage());
+        }
         return "redirect:/admin/projects";
     }
-
-
 
 }

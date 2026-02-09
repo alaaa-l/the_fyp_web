@@ -13,7 +13,9 @@ import java.util.Set;
 public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;// bde es2l chatgpt
+    private Long id;
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Transaction> transactions;
     @ManyToMany
     @JoinTable(name = "project_likes", joinColumns = @JoinColumn(name = "project_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Set<User> likedUsers = new HashSet<>();
@@ -51,8 +53,14 @@ public class Project {
     }
 
     private String title;
+    @Column(columnDefinition = "TEXT")
     private String shortDescription;
+    @Column(columnDefinition = "TEXT", nullable = true)
     private String longDescription;
+
+    @Lob
+    @Column(columnDefinition = "TEXT")
+    private String projectStory;
     private String category;
     private Double fundingGoal;
     private Integer fundingDuration;
@@ -71,6 +79,16 @@ public class Project {
 
     @NotBlank
     private String address;
+
+    private boolean urgent;
+
+    public boolean isUrgent() {
+        return urgent;
+    }
+
+    public void setUrgent(boolean urgent) {
+        this.urgent = urgent;
+    }
 
     public String getPhoneNumber() {
         return phoneNumber;
@@ -205,6 +223,14 @@ public class Project {
         return type;
     }
 
+    public String getProjectStory() {
+        return projectStory;
+    }
+
+    public void setProjectStory(String projectStory) {
+        this.projectStory = projectStory;
+    }
+
     public void setType(ProjectType type) {
         this.type = type;
     }
@@ -231,7 +257,7 @@ public class Project {
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -299,7 +325,7 @@ public class Project {
         this.owner = owner;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 

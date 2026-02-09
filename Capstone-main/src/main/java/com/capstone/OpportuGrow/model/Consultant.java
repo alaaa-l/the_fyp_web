@@ -22,6 +22,7 @@ public class Consultant {
     @OneToMany(mappedBy = "consultant", cascade = CascadeType.ALL)
     private List<ConsultantFile> files;
 
+    @Column(name = "profile_image")
     private String profileImage;
 
     public String getProfileImage() {
@@ -60,7 +61,7 @@ public class Consultant {
     public void setActive(boolean active) {
         this.active = active;
     }
-// --- Files & Appointments relations (إذا موجودة)
+    // --- Files & Appointments relations (إذا موجودة)
 
     public User getUser() {
         return user;
@@ -78,7 +79,7 @@ public class Consultant {
 
     // --- Transient property لعرض المواعيد المتاحة في Thymeleaf ---
     @Transient
-    private List<Slot> availableSlots ;
+    private List<Slot> availableSlots;
 
     public List<Slot> getAvailableSlots() {
         return availableSlots;
@@ -97,13 +98,21 @@ public class Consultant {
         this.id = id;
     }
 
-    public String getName() { return name; }
+    public String getName() {
+        return name;
+    }
 
-    public void setName(String name) { this.name = name; }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    public String getSpecialty() { return specialty; }
+    public String getSpecialty() {
+        return specialty;
+    }
 
-    public void setSpecialty(String specialty) { this.specialty = specialty; }
+    public void setSpecialty(String specialty) {
+        this.specialty = specialty;
+    }
 
     public String getEmail() {
         return email;

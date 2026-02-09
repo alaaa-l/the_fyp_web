@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -184,7 +185,8 @@
             margin-bottom: 30px;
         }
 
-        .form-control-custom, .form-select-custom {
+        .form-control-custom,
+        .form-select-custom {
             border: 2px solid #e9ecef;
             border-radius: 12px;
             padding: 12px 18px;
@@ -192,7 +194,8 @@
             transition: all 0.3s ease;
         }
 
-        .form-control-custom:focus, .form-select-custom:focus {
+        .form-control-custom:focus,
+        .form-select-custom:focus {
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
@@ -410,11 +413,13 @@
                 flex-wrap: wrap;
             }
 
-            thead th, tbody td {
+            thead th,
+            tbody td {
                 padding: 12px 15px;
             }
         }
-          body {
+
+        body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
@@ -474,21 +479,21 @@
             text-decoration: none;
             color: white;
             font-weight: 500;
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             padding: 8px 16px;
             border-radius: 8px;
             transition: background 0.3s;
         }
 
         .card-header a:hover {
-            background: rgba(255,255,255,0.35);
+            background: rgba(255, 255, 255, 0.35);
         }
 
         .card-container {
             background: #fff;
             padding: 20px;
             border-radius: 12px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
         }
     </style>
     <title th:text="${pageTitle}">Admin Dashboard</title>
@@ -499,16 +504,26 @@
 </head>
 
 <body>
-<!-- Sidebar Fragment -->
-<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <!-- Sidebar Fragment -->
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 
-<!-- Main content -->
-<div class="main-content">
-    <div th:replace="~{${contentTemplate} :: content}"></div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Main content -->
+    <div class="main-content">
+        <!-- Flash Messages -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <span th:text="${successMessage}">Success!</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <span th:text="${errorMessage}">Error!</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div th:replace="~{${contentTemplate} :: content}"></div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
+
 </html>
-
-
-

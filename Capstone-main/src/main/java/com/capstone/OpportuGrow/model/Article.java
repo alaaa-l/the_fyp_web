@@ -30,6 +30,8 @@ public class Article {
     // بداخل ملف Article.java
     private String content;
 
+    private String category; // nullable field for article category
+
     public String getContent() {
         return content;
     }
@@ -38,9 +40,15 @@ public class Article {
         this.content = content;
     }
 
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
 
     // --- Getters & Setters ---
-
 
     public String getDescription() {
         return description;
@@ -106,4 +114,3 @@ public class Article {
         this.uploadedAt = uploadedAt;
     }
 }
-

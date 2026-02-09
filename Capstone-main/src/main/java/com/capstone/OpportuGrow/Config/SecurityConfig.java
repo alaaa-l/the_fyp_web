@@ -44,6 +44,8 @@ public class SecurityConfig {
                                                 .authenticated()
                                                 .requestMatchers("/api/projects/**")
                                                 .authenticated()
+                                                .requestMatchers("/api/articles/**")
+                                                .authenticated()
                                                 .requestMatchers(
                                                                 "/",
                                                                 "/index",

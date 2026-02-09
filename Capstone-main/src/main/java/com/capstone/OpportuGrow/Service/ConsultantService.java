@@ -113,6 +113,7 @@ public class ConsultantService {
                 .specialty(consultant.getSpecialty())
                 .active(consultant.isActive())
                 .user(userResponse)
+                .profileImage(consultant.getProfileImage())
                 .build();
     }
 }

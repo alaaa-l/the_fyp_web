@@ -32,6 +32,14 @@ public class ProjectRegisterDto {
         this.longDescription = longDescription;
     }
 
+    public String getProjectStory() {
+        return projectStory;
+    }
+
+    public void setProjectStory(String projectStory) {
+        this.projectStory = projectStory;
+    }
+
     public String getCategory() {
         return category;
     }
@@ -64,11 +72,27 @@ public class ProjectRegisterDto {
         this.imageUrl = imageUrl;
     }
 
+    @NotBlank(message = "Title is required")
+    @jakarta.validation.constraints.Size(max = 80, message = "Title cannot exceed 80 characters")
     private String title;
+
+    @NotBlank(message = "Short description is required")
+    @jakarta.validation.constraints.Size(max = 200, message = "Short description cannot exceed 200 characters")
     private String shortDescription;
+
     private String longDescription;
+
+    @NotBlank(message = "Project story is required")
+    @jakarta.validation.constraints.Size(max = 2000, message = "Project story cannot exceed 2000 characters")
+    private String projectStory;
+
+    @NotBlank(message = "Category is required")
     private String category;
+
+    @jakarta.validation.constraints.NotNull(message = "Funding goal is required")
     private Double fundingGoal;
+
+    @jakarta.validation.constraints.NotNull(message = "Funding duration is required")
     private Integer fundingDuration; // بالأيام
     private String imageUrl;
     private MultipartFile imageFile;
@@ -84,6 +108,16 @@ public class ProjectRegisterDto {
 
     @NotBlank
     private String address;
+
+    private boolean urgent;
+
+    public boolean isUrgent() {
+        return urgent;
+    }
+
+    public void setUrgent(boolean urgent) {
+        this.urgent = urgent;
+    }
 
     public String getPhoneNumber() {
         return phoneNumber;
@@ -149,10 +183,12 @@ public class ProjectRegisterDto {
         this.type = type;
     }
 
+    public MultipartFile getImageFile() {
+        return imageFile;
+    }
 
-    public MultipartFile getImageFile() { return imageFile; }
-    public void setImageFile(MultipartFile imageFile) { this.imageFile = imageFile; }// لاحقاً بعد رفع الصور
-
+    public void setImageFile(MultipartFile imageFile) {
+        this.imageFile = imageFile;
+    }// لاحقاً بعد رفع الصور
 
 }
-

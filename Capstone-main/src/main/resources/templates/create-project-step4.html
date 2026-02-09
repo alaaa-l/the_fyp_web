@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+    xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -34,7 +35,7 @@
             margin: 40px auto;
             background: white;
             border-radius: 25px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
             overflow: hidden;
         }
 
@@ -47,7 +48,7 @@
         }
 
         .project-type-badge {
-            background: rgba(255,255,255,0.15);
+            background: rgba(255, 255, 255, 0.15);
             color: white;
             padding: 10px 25px;
             border-radius: 50px;
@@ -117,7 +118,7 @@
             font-size: 18px;
             transition: all 0.3s ease;
             border: 3px solid white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
         .step-item.completed .step-circle {
@@ -164,7 +165,7 @@
             align-items: center;
             margin-bottom: 25px;
             padding-bottom: 15px;
-            border-bottom: 2px solid rgba(0,0,0,0.1);
+            border-bottom: 2px solid rgba(0, 0, 0, 0.1);
         }
 
         .section-title {
@@ -231,7 +232,7 @@
             padding: 12px 15px;
             background: white;
             border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
             border-left: 4px solid var(--accent);
         }
 
@@ -245,7 +246,7 @@
             height: 250px;
             object-fit: cover;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             margin-top: 15px;
             border: 3px solid white;
         }
@@ -269,7 +270,7 @@
             border-radius: 15px;
             padding: 25px;
             margin-top: 20px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
             border: 2px solid var(--light);
         }
 
@@ -429,16 +430,27 @@
         }
 
         @keyframes stroke {
-            100% { stroke-dashoffset: 0; }
+            100% {
+                stroke-dashoffset: 0;
+            }
         }
 
         @keyframes scale {
-            0%, 100% { transform: none; }
-            50% { transform: scale3d(1.1, 1.1, 1); }
+
+            0%,
+            100% {
+                transform: none;
+            }
+
+            50% {
+                transform: scale3d(1.1, 1.1, 1);
+            }
         }
 
         @keyframes fill {
-            100% { box-shadow: inset 0px 0px 0px 40px var(--accent); }
+            100% {
+                box-shadow: inset 0px 0px 0px 40px var(--accent);
+            }
         }
 
         /* Responsive */
@@ -525,106 +537,127 @@
         }
 
         @keyframes loading-dots1 {
-            0% { transform: scale(0); }
-            100% { transform: scale(1); }
+            0% {
+                transform: scale(0);
+            }
+
+            100% {
+                transform: scale(1);
+            }
         }
 
         @keyframes loading-dots3 {
-            0% { transform: scale(1); }
-            100% { transform: scale(0); }
+            0% {
+                transform: scale(1);
+            }
+
+            100% {
+                transform: scale(0);
+            }
         }
 
         @keyframes loading-dots2 {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(24px, 0); }
+            0% {
+                transform: translate(0, 0);
+            }
+
+            100% {
+                transform: translate(24px, 0);
+            }
         }
     </style>
 </head>
+
 <body>
-<!-- Navigation Bar -->
-<div th:replace="fragments/navbar :: navbar"></div>
+    <!-- Navigation Bar -->
+    <div th:replace="fragments/navbar :: navbar"></div>
 
-<!-- Main Container -->
-<div class="creation-container">
-    <!-- Header -->
-    <div class="creation-header">
-        <div class="project-type-badge">
-            <i class="fas fa-clipboard-check"></i>
-            <span>Review & Submit</span>
+    <!-- Main Container -->
+    <div class="creation-container">
+        <!-- Header -->
+        <div class="creation-header">
+            <div class="project-type-badge">
+                <i class="fas fa-clipboard-check"></i>
+                <span>Review & Submit</span>
+            </div>
+            <h1>Review Your Project</h1>
+            <p>Check all details before submitting. Once approved, your project will be live on OpportuGrow.</p>
         </div>
-        <h1>Review Your Project</h1>
-        <p>Check all details before submitting. Once approved, your project will be live on OpportuGrow.</p>
+
+        <!-- Step Progress -->
+        <div class="step-progress">
+            <div class="step-tracker">
+                <div class="step-item completed">
+                    <div class="step-circle">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div class="step-label">Basic Info</div>
+                </div>
+                <div class="step-item completed">
+                    <div class="step-circle">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div class="step-label">Funding Details</div>
+                </div>
+                <div class="step-item completed">
+                    <div class="step-circle">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div class="step-label">Media & Story</div>
+                </div>
+                <div class="step-item active">
+                    <div class="step-circle">4</div>
+                    <div class="step-label">Review & Submit</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Review Container -->
+        <form th:object="${projectRegister}" th:action="@{/create-project/submit}" method="post">
+            <div class="review-section">
+                <h4>Basic Information</h4>
+                <p><strong>Title:</strong> <span th:text="${projectRegister.title}">Project Title</span></p>
+                <p><strong>Short Description:</strong> <span th:text="${projectRegister.shortDescription}">Short
+                        Desc</span></p>
+                <p><strong>Project Story:</strong> <span th:text="${projectRegister.projectStory}">Project Story</span>
+                </p>
+                <p><strong>Category:</strong> <span th:text="${projectRegister.category}">Category</span></p>
+            </div>
+
+            <div class="review-section">
+                <h4>Funding Details</h4>
+                <p><strong>Funding Goal:</strong> $<span th:text="${projectRegister.fundingGoal}">0</span></p>
+                <p><strong>Platform Fee (5%):</strong> $<span th:text="${projectRegister.platformFee}">0</span></p>
+                <p><strong>Processing Fee (2.9%):</strong> $<span th:text="${projectRegister.processingFee}">0</span>
+                </p>
+                <p><strong>Amount You Will Receive:</strong> $<span
+                        th:text="${projectRegister.amountYouWillReceive}">0</span></p>
+            </div>
+            <div class="review-section">
+                <h4>Personal Details</h4>
+                <p><strong>Address:</strong><span th:text="${projectRegister.address}"></span></p>
+                <p><strong>Phone Number:</strong><span th:text="${projectRegister.phoneNumber}"></span></p>
+            </div>
+
+            <div class="review-section">
+                <h4>Media</h4>
+                <div th:if="${projectRegister.imageUrl != null}">
+                    <img th:src="${projectRegister.imageUrl}" alt="Project Image" style="max-width:300px;">
+                </div>
+                <div th:unless="${projectRegister.imageUrl != null}">
+                    <p>No image uploaded</p>
+                </div>
+            </div>
+
+            <div class="review-section">
+                <label>
+                    <input type="checkbox" name="agreeTerms" required> I agree to the Terms & Conditions
+                </label>
+            </div>
+
+            <button type="submit" class="btn btn-success">Submit Project</button>
+        </form>
     </div>
-
-    <!-- Step Progress -->
-    <div class="step-progress">
-        <div class="step-tracker">
-            <div class="step-item completed">
-                <div class="step-circle">
-                    <i class="fas fa-check"></i>
-                </div>
-                <div class="step-label">Basic Info</div>
-            </div>
-            <div class="step-item completed">
-                <div class="step-circle">
-                    <i class="fas fa-check"></i>
-                </div>
-                <div class="step-label">Funding Details</div>
-            </div>
-            <div class="step-item completed">
-                <div class="step-circle">
-                    <i class="fas fa-check"></i>
-                </div>
-                <div class="step-label">Media & Story</div>
-            </div>
-            <div class="step-item active">
-                <div class="step-circle">4</div>
-                <div class="step-label">Review & Submit</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Review Container -->
-    <form th:object="${projectRegister}" th:action="@{/create-project/submit}" method="post">
-        <div class="review-section">
-            <h4>Basic Information</h4>
-            <p><strong>Title:</strong> <span th:text="${projectRegister.title}">Project Title</span></p>
-            <p><strong>Short Description:</strong> <span th:text="${projectRegister.shortDescription}">Short Desc</span></p>
-            <p><strong>Long Description:</strong> <span th:text="${projectRegister.longDescription}">Long Desc</span></p>
-            <p><strong>Category:</strong> <span th:text="${projectRegister.category}">Category</span></p>
-        </div>
-
-        <div class="review-section">
-            <h4>Funding Details</h4>
-            <p><strong>Funding Goal:</strong> $<span th:text="${projectRegister.fundingGoal}">0</span></p>
-            <p><strong>Platform Fee (5%):</strong> $<span th:text="${projectRegister.platformFee}">0</span></p>
-            <p><strong>Processing Fee (2.9%):</strong> $<span th:text="${projectRegister.processingFee}">0</span></p>
-            <p><strong>Amount You Will Receive:</strong> $<span th:text="${projectRegister.amountYouWillReceive}">0</span></p>
-        </div>
-        <div class="review-section">
-            <h4>Personal Details</h4>
-            <p><strong>Address:</strong><span th:text="${projectRegister.address}"></span></p>
-            <p><strong>Phone Number:</strong><span th:text="${projectRegister.phoneNumber}"></span></p>
-        </div>
-
-        <div class="review-section">
-            <h4>Media</h4>
-            <div th:if="${projectRegister.imageUrl != null}">
-                <img th:src="${projectRegister.imageUrl}" alt="Project Image" style="max-width:300px;">
-            </div>
-            <div th:unless="${projectRegister.imageUrl != null}">
-                <p>No image uploaded</p>
-            </div>
-        </div>
-
-        <div class="review-section">
-            <label>
-                <input type="checkbox" name="agreeTerms" required> I agree to the Terms & Conditions
-            </label>
-        </div>
-
-        <button type="submit" class="btn btn-success">Submit Project</button>
-    </form>
-</div>
 </body>
+
 </html>
