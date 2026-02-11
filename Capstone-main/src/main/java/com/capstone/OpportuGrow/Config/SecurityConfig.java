@@ -1,6 +1,7 @@
 package com.capstone.OpportuGrow.Config;
 
 import com.capstone.OpportuGrow.Service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,7 +34,7 @@ public class SecurityConfig {
 
                 http
                                 .csrf(csrf -> csrf
-                                                .ignoringRequestMatchers("/api/**"))
+                                                .ignoringRequestMatchers("/api/**", "/stripe/**"))
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers(
                                                                 "/api/auth/**")
@@ -43,6 +44,8 @@ public class SecurityConfig {
                                                 .requestMatchers("/api/appointments/**")
                                                 .authenticated()
                                                 .requestMatchers("/api/projects/**")
+                                                .authenticated()
+                                                .requestMatchers("/api/payments/**")
                                                 .authenticated()
                                                 .requestMatchers("/api/articles/**")
                                                 .authenticated()
@@ -56,7 +59,8 @@ public class SecurityConfig {
                                                                 "/css/**",
                                                                 "/js/**",
                                                                 "/images/**",
-                                                                "/uploads/**")
+                                                                "/uploads/**",
+                                                                "/stripe/**")
                                                 .permitAll()
                                                 .requestMatchers("/my-projects",
                                                                 "/projects/create/**",
@@ -107,7 +111,20 @@ public class SecurityConfig {
                                                 .invalidateHttpSession(true)
                                                 .deleteCookies("JSESSIONID")
                                                 .permitAll())
-                                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                                .exceptionHandling(exceptions -> exceptions
+                                                .defaultAuthenticationEntryPointFor(
+                                                                (request, response, authException) -> response
+                                                                                .sendError(
+                                                                                                HttpServletResponse.SC_UNAUTHORIZED,
+                                                                                                "Unauthorized"),
+                                                                new org.springframework.security.web.util.matcher.AntPathRequestMatcher(
+                                                                                "/api/**")))
+                                .sessionManagement(session -> session
+                                                .sessionCreationPolicy(
+                                                                org.springframework.security.config.http.SessionCreationPolicy.IF_REQUIRED)
+                                                .sessionConcurrency(concurrency -> concurrency
+                                                                .maximumSessions(1)));
 
                 return http.authenticationProvider(authenticationProvider()).build();
         }

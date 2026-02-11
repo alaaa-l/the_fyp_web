@@ -64,7 +64,6 @@ public class Project {
     private String category;
     private Double fundingGoal;
     private Integer fundingDuration;
-    private Double amountFunded;
     private String imageUrl;
     private BigDecimal platformFee;
     private BigDecimal processingFee;
@@ -72,8 +71,6 @@ public class Project {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
     private Role role;
-    @Column(nullable = false)
-    private Double currentFunding = 0.0;
     @NotBlank
     private String phoneNumber;
 
@@ -104,14 +101,6 @@ public class Project {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public Double getCurrentFunding() {
-        return currentFunding;
-    }
-
-    public void setCurrentFunding(Double currentFunding) {
-        this.currentFunding = currentFunding;
     }
 
     public Date getCreatedAt() {
@@ -155,7 +144,7 @@ public class Project {
     private String videoUrl;
     @Enumerated(EnumType.STRING)
     private ProjectStatus status;
-    private long raisedAmount;
+    private Double raisedAmount = 0.0;
     @ManyToOne
     @JoinColumn(name = "consultant_id")
     private Consultant consultant;
@@ -195,11 +184,11 @@ public class Project {
         this.role = role;
     }
 
-    public long getRaisedAmount() {
+    public Double getRaisedAmount() {
         return raisedAmount;
     }
 
-    public void setRaisedAmount(long raisedAmount) {
+    public void setRaisedAmount(Double raisedAmount) {
         this.raisedAmount = raisedAmount;
     }
 
@@ -329,11 +318,4 @@ public class Project {
         return id;
     }
 
-    public Double getAmountFunded() {
-        return amountFunded;
-    }
-
-    public void setAmountFunded(Double amountFunded) {
-        this.amountFunded = amountFunded;
-    }
 }

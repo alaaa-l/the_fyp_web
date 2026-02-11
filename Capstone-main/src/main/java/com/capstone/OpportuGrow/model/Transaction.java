@@ -20,6 +20,9 @@ public class Transaction {
     private LocalDateTime timestamp;
     private String type; // LOAN, INVESTMENT, or DONATION
 
+    @Column(unique = true)
+    private String paymentIntentId;
+
     // Getters and Setters
 
     public Long getId() {
@@ -68,5 +71,13 @@ public class Transaction {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getPaymentIntentId() {
+        return paymentIntentId;
+    }
+
+    public void setPaymentIntentId(String paymentIntentId) {
+        this.paymentIntentId = paymentIntentId;
     }
 }

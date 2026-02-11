@@ -1,34 +1,25 @@
 package com.capstone.OpportuGrow.Controller;
-import com.capstone.OpportuGrow.Repository.ChatMessageRepository;
+
 import com.capstone.OpportuGrow.Repository.ProjectRepository;
 import com.capstone.OpportuGrow.Repository.UserRepository;
-import com.capstone.OpportuGrow.model.ChatMessage;
 import com.capstone.OpportuGrow.model.Project;
 import com.capstone.OpportuGrow.model.ProjectStatus;
 import com.capstone.OpportuGrow.model.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import jakarta.servlet.http.HttpServletRequest;
-
-import java.security.Principal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.time.Month;
-import java.time.LocalDate;
 
 @Controller
 @RequestMapping("/admin")
 
-    public class AdminController {
+public class AdminController {
 
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
-
 
     public AdminController(UserRepository userRepository, ProjectRepository projectRepository) {
         this.userRepository = userRepository;
@@ -41,7 +32,7 @@ import java.time.LocalDate;
         List<Project> projects = projectRepository.findAll();
 
         int totalProjects = projects.size();
-        long totalRaised = projects.stream().mapToLong(Project::getRaisedAmount).sum();
+        double totalRaised = projects.stream().mapToDouble(Project::getRaisedAmount).sum();
         // تأكد إن ميثود isActive موجودة بكلاس الـ User
         long activeUsers = userRepository.findAll().stream().filter(User::isActive).count();
 
@@ -51,7 +42,7 @@ import java.time.LocalDate;
 
         // Monthly stats
         int[] projectsPerMonth = new int[12];
-        long[] fundsPerMonth = new long[12];
+        double[] fundsPerMonth = new double[12];
 
         projects.forEach(p -> {
             if (p.getCreatedAt() != null) {
@@ -74,22 +65,19 @@ import java.time.LocalDate;
         // تحويل الـ Arrays لـ List كرمال Thymeleaf يقرأهم كـ JSON Arrays بالـ JS
         model.addAttribute("projectsPerMonth", projectsPerMonth);
         model.addAttribute("fundsPerMonth", fundsPerMonth);
-        model.addAttribute("months", List.of("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"));
+        model.addAttribute("months",
+                List.of("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"));
 
         // حساب الـ Success Rate مع تقريب الرقم (Formatting)
         double rawSuccessRate = totalProjects > 0 ? ((double) approvedProjects / totalProjects * 100) : 0;
         model.addAttribute("successRate", Math.round(rawSuccessRate * 10.0) / 10.0);
 
-        model.addAttribute("lastUpdated", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm")));
+        model.addAttribute("lastUpdated",
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm")));
         model.addAttribute("pageTitle", "Admin Dashboard");
         model.addAttribute("contentTemplate", "admin-dashboard");
 
         return "admin-layout"; // تأكد إنك عم ترجع الـ Layout الأساسي
     }; // بدون .html
-
-
-
-
-
 
 }

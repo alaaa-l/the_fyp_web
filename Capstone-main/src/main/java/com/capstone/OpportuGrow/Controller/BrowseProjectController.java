@@ -2,9 +2,11 @@ package com.capstone.OpportuGrow.Controller;
 
 import com.capstone.OpportuGrow.Repository.CommentRepository;
 import com.capstone.OpportuGrow.Repository.ProjectRepository;
-import com.capstone.OpportuGrow.Repository.TransactionRepository;
 import com.capstone.OpportuGrow.Repository.UserRepository;
+import com.capstone.OpportuGrow.Service.StripeService;
 import com.capstone.OpportuGrow.model.*;
+import com.stripe.exception.StripeException;
+import com.stripe.model.PaymentIntent;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -14,10 +16,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-
 
 @Controller
 @RequestMapping("/projects")
@@ -25,14 +25,16 @@ public class BrowseProjectController {
 
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
-    private final TransactionRepository transactionRepository;
     private final CommentRepository commentRepository;
+    private final StripeService stripeService;
 
-    public BrowseProjectController(CommentRepository commentRepository,TransactionRepository transactionRepository,ProjectRepository projectRepository,UserRepository userRepository) {
+    public BrowseProjectController(CommentRepository commentRepository,
+            ProjectRepository projectRepository, UserRepository userRepository,
+            StripeService stripeService) {
         this.projectRepository = projectRepository;
-        this.userRepository=userRepository;
-        this.transactionRepository=transactionRepository;
-        this.commentRepository=commentRepository;
+        this.userRepository = userRepository;
+        this.commentRepository = commentRepository;
+        this.stripeService = stripeService;
     }
 
     @GetMapping
@@ -41,8 +43,7 @@ public class BrowseProjectController {
             @RequestParam(required = false) ProjectType type,
             @RequestParam(defaultValue = "1") int page,
             Model model,
-            Principal principal
-    ) {
+            Principal principal) {
         // Fetch projects according to filters
         List<Project> projects;
         if ((keyword == null || keyword.isEmpty()) && type == null) {
@@ -65,7 +66,6 @@ public class BrowseProjectController {
                 project.setLikedByCurrentUser(false);
             }
         }
-
 
         // Pagination
         int pageSize = 6; // projects per page
@@ -92,9 +92,11 @@ public class BrowseProjectController {
     // Like project
     @PostMapping("/{id}/like")
     public String likeProject(@PathVariable Integer id, Principal principal) {
-        if (principal == null) return "redirect:/login";
+        if (principal == null)
+            return "redirect:/login";
 
-        Project project = projectRepository.findById(Long.valueOf(id)).orElseThrow();
+        Long projId = Long.valueOf(id);
+        Project project = projectRepository.findById(projId).orElseThrow();
         User user = userRepository.findByEmail(principal.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -111,7 +113,8 @@ public class BrowseProjectController {
 
     @PostMapping("/{id}/comment")
     public String addComment(@PathVariable Integer id, @RequestParam String content, Principal principal) {
-        if (principal == null) return "redirect:/login";
+        if (principal == null)
+            return "redirect:/login";
 
         Project project = projectRepository.findById(Long.valueOf(id)).orElseThrow();
         User user = userRepository.findByEmail(principal.getName()).orElseThrow();
@@ -151,38 +154,32 @@ public class BrowseProjectController {
 
         return "agreement-page"; // Safhet l-3a2ed li 3melneha
     }
-    @GetMapping("/{id}/payment")
-    public String showPaymentPage(@PathVariable Long id, @RequestParam Double amount, Model model) {
-        Project project = projectRepository.findById(id).get();
-        model.addAttribute("project", project);
-        model.addAttribute("amount", amount);
-        return "payment-page";
-    }
 
-    @PostMapping("/{id}/process-payment")
-    public String processPayment(@PathVariable Long id, @RequestParam Double amount, Principal principal) {
+    @GetMapping("/{id}/payment")
+    public String showPaymentPage(@PathVariable Long id, @RequestParam Double amount, Model model, Principal principal)
+            throws StripeException {
+        if (principal == null)
+            return "redirect:/login";
+
         Project project = projectRepository.findById(id).get();
         User user = userRepository.findByEmail(principal.getName()).get();
 
-        // 1. Update project funding
-        project.setRaisedAmount((long) (project.getRaisedAmount() + amount));
-        // 2. التشيك: إذا صار المبلغ المجموع بيساوي أو أكبر من الهدف
-        if (project.getRaisedAmount() >= project.getFundingGoal()) {
-            project.setStatus(ProjectStatus.COMPLETED); // أو أي اسم status إنت معتمده
-        }
-        projectRepository.save(project);
+        // Create PaymentIntent
+        PaymentIntent intent = stripeService.createPaymentIntent(
+                amount,
+                "usd",
+                project.getId().toString(),
+                String.valueOf(user.getId()),
+                project.getType().toString());
 
-        // 2. Create Transaction Record
-        Transaction transaction = new Transaction();
-        transaction.setSender(user);
-        transaction.setProject(project);
-        transaction.setAmount(amount);
-        transaction.setTimestamp(LocalDateTime.now());
-        transaction.setType(project.getType().toString());
-        transactionRepository.save(transaction);
+        model.addAttribute("project", project);
+        model.addAttribute("amount", amount);
+        model.addAttribute("clientSecret", intent.getClientSecret());
+        model.addAttribute("stripePublicKey", stripeService.getPublicKey());
 
-        return "redirect:/projects?success=payment_completed";
+        return "payment-page";
     }
+
     @GetMapping("/{id}")
     public String showProjectDetails(@PathVariable int id, Model model, Principal principal) {
         Project project = projectRepository.findById((long) id).orElseThrow();

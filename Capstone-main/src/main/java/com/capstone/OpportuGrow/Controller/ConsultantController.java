@@ -1,6 +1,5 @@
 package com.capstone.OpportuGrow.Controller;
 
-
 import com.capstone.OpportuGrow.Repository.*;
 import com.capstone.OpportuGrow.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,14 +33,14 @@ public class ConsultantController {
 
     @Autowired
     public ConsultantController(ConsultantRepository consultantRepository,
-                                         AppointmentRepository appointmentRepository,
-                                         UserRepository userRepository,
-                                AvailabilityRepository availabilityRepository, ArticleRepository articleRepository) {
+            AppointmentRepository appointmentRepository,
+            UserRepository userRepository,
+            AvailabilityRepository availabilityRepository, ArticleRepository articleRepository) {
         this.consultantRepository = consultantRepository;
         this.appointmentRepository = appointmentRepository;
         this.userRepository = userRepository;
-        this.availabilityRepository=availabilityRepository;
-        this.articleRepository=articleRepository;
+        this.availabilityRepository = availabilityRepository;
+        this.articleRepository = articleRepository;
     }
 
     // Dashboard page
@@ -74,11 +73,10 @@ public class ConsultantController {
         model.addAttribute("appointment", appointment);
         return "appointment-detail"; // can create separate page
     }
+
     @GetMapping("/consultant/profile/edit")
     public String editProfile(Model model, Principal principal) {
-        Consultant consultant =
-                consultantRepository.findByEmail(principal.getName());
-
+        Consultant consultant = consultantRepository.findByEmail(principal.getName());
 
         model.addAttribute("consultant", consultant);
         return "consultant-edit-profile";
@@ -86,8 +84,8 @@ public class ConsultantController {
 
     @PostMapping("/consultant/profile/update")
     public String updateProfile(@ModelAttribute Consultant consultant,
-                                @RequestParam(value = "profileImageFile", required = false) MultipartFile profileImageFile,
-                                RedirectAttributes redirectAttributes) {
+            @RequestParam(value = "profileImageFile", required = false) MultipartFile profileImageFile,
+            RedirectAttributes redirectAttributes) {
 
         // 1️⃣ جلب الـ consultant الحالي من الداتابيز
         Consultant existingConsultant = consultantRepository.findById((long) consultant.getId())
@@ -103,11 +101,13 @@ public class ConsultantController {
                 String uploadDir = "C:/og-uploads/";
 
                 // تنظيف اسم الملف ومنع التكرار باستخدام UUID (اختياري ولكن أفضل)
-                String fileName = System.currentTimeMillis() + "_" + StringUtils.cleanPath(profileImageFile.getOriginalFilename());
+                String fileName = System.currentTimeMillis() + "_"
+                        + StringUtils.cleanPath(profileImageFile.getOriginalFilename());
 
                 // التأكد من وجود المجلد
                 File dir = new File(uploadDir);
-                if (!dir.exists()) dir.mkdirs();
+                if (!dir.exists())
+                    dir.mkdirs();
 
                 // حفظ الملف في المسار الخارجي
                 Path filePath = Paths.get(uploadDir + fileName);
@@ -137,6 +137,7 @@ public class ConsultantController {
         redirectAttributes.addFlashAttribute("success", "Profile updated successfully!");
         return "redirect:/consultants/dashboard";
     }
+
     // ConsultantController
     @GetMapping("/consultant/schedule")
     public String scheduleForm(Model model, Principal principal) {
@@ -150,10 +151,10 @@ public class ConsultantController {
 
     @PostMapping("/consultant/schedule")
     public String saveAvailability(@RequestParam DayOfWeek day,
-                                   @RequestParam String startTime,
-                                   @RequestParam String endTime,
-                                   Principal principal,
-                                   RedirectAttributes redirectAttributes) {
+            @RequestParam String startTime,
+            @RequestParam String endTime,
+            Principal principal,
+            RedirectAttributes redirectAttributes) {
 
         Consultant consultant = consultantRepository.findByEmail(principal.getName());
 
@@ -167,18 +168,20 @@ public class ConsultantController {
         redirectAttributes.addFlashAttribute("success", "Availability saved!");
         return "redirect:/consultant/schedule";
     }
+
     @PostMapping("/consultant/schedule/delete/{id}")
     public String deleteAvailability(@PathVariable Long id) {
         availabilityRepository.deleteById(id);
         return "redirect:/consultant/schedule";
     }
 
-        @GetMapping("/consultant/logout")
-        public String logoutPage() {
-            // بعد logout رح يرجع للـ login page
-            return "redirect:/login";
+    @GetMapping("/consultant/logout")
+    public String logoutPage() {
+        // بعد logout رح يرجع للـ login page
+        return "redirect:/login";
 
     }
+
     // 📄 Form page
     @GetMapping("/consultant/create")
     public String showCreateArticle(Model model) {
@@ -190,9 +193,9 @@ public class ConsultantController {
     // 📤 Submit
     @PostMapping("/consultant/create")
     public String createArticle(@ModelAttribute Article article,
-                                @RequestParam(required = false) MultipartFile file,
-                                Principal principal,
-                                RedirectAttributes redirectAttributes) {
+            @RequestParam(required = false) MultipartFile file,
+            Principal principal,
+            RedirectAttributes redirectAttributes) {
 
         Consultant consultant = consultantRepository
                 .findByEmail(principal.getName());
@@ -200,10 +203,12 @@ public class ConsultantController {
         // 📂 Upload file (if PDF)
         if (file != null && !file.isEmpty()) {
             try {
-                // غيري هيدا السطر بالـ Controller
-                String uploadDir = "C:/og-uploads/";
+                // Ensure files are saved in C:/og-uploads/articles/ to match the
+                // /uploads/articles/ URL prefix
+                String uploadDir = "C:/og-uploads/articles/";
                 File dir = new File(uploadDir);
-                if (!dir.exists()) dir.mkdirs();
+                if (!dir.exists())
+                    dir.mkdirs();
 
                 String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
                 file.transferTo(new File(uploadDir + fileName));
@@ -211,7 +216,7 @@ public class ConsultantController {
                 article.setFileUrl("/uploads/articles/" + fileName);
             } catch (Exception e) {
                 redirectAttributes.addFlashAttribute("error", "File upload failed");
-                return "redirect:/consultant/articles/create";
+                return "redirect:/consultant/create";
             }
         }
 
@@ -222,15 +227,3 @@ public class ConsultantController {
         return "redirect:/consultants/dashboard";
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-

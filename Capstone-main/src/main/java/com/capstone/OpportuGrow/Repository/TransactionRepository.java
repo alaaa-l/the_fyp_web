@@ -1,6 +1,5 @@
 package com.capstone.OpportuGrow.Repository;
 
-
 import com.capstone.OpportuGrow.model.Transaction;
 import com.capstone.OpportuGrow.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,4 +15,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     // Find all transactions for a specific project
     List<Transaction> findByProjectId(Long projectId);
+
+    boolean existsByPaymentIntentId(String paymentIntentId);
 }

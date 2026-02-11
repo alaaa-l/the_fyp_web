@@ -17,13 +17,12 @@ public class ProjectResponseDto {
     private String category;
     private Double fundingGoal;
     private Integer fundingDuration;
-    private Double currentFunding;
     private ProjectStatus status;
     private ProjectType type;
     private String imageUrl;
     private String ownerName;
     private Date createdAt;
     private double fundingPercent;
-    private Long raisedAmount;
+    private Double raisedAmount;
     private boolean urgent;
 }

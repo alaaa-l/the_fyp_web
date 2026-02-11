@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
   <meta charset="UTF-8">
@@ -201,7 +201,7 @@
     }
 
     /* Status Badge */
-    span[th\\:text="\$\{project.status\}"] {
+    span[th\:text="${project.status}"] {
       padding: 8px 16px;
       border-radius: 50px;
       font-weight: 600;
@@ -213,22 +213,22 @@
       text-transform: uppercase;
     }
 
-    span[th\\:text="PENDING"],
-    span[th\\:text="\$\{project.status\}"][th\\:if="\$\{project.status\} == 'PENDING'"] {
+    span[th\:text="PENDING"],
+    span[th\:text="${project.status}"][th\:if="${project.status} == 'PENDING'"] {
       background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(245, 158, 11, 0.1) 100%);
       color: #f59e0b;
       border: 1px solid rgba(245, 158, 11, 0.2);
     }
 
-    span[th\\:text="APPROVED"],
-    span[th\\:text="\$\{project.status\}"][th\\:if="\$\{project.status\} == 'APPROVED'"] {
+    span[th\:text="APPROVED"],
+    span[th\:text="${project.status}"][th\:if="${project.status} == 'APPROVED'"] {
       background: linear-gradient(135deg, rgba(67, 233, 123, 0.1) 0%, rgba(56, 249, 215, 0.1) 100%);
       color: #22c55e;
       border: 1px solid rgba(34, 197, 94, 0.2);
     }
 
-    span[th\\:text="REJECTED"],
-    span[th\\:text="\$\{project.status\}"][th\\:if="\$\{project.status\} == 'REJECTED'"] {
+    span[th\:text="REJECTED"],
+    span[th\:text="${project.status}"][th\:if="${project.status} == 'REJECTED'"] {
       background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);
       color: #ef4444;
       border: 1px solid rgba(239, 68, 68, 0.2);
@@ -491,7 +491,7 @@
     }
 
     /* Category Badge */
-    p strong+span[th\\:text="\$\{project.category\}"] {
+    p strong+span[th\:text="${project.category}"] {
       padding: 6px 12px;
       background: #f1f5f9;
       border-radius: 8px;

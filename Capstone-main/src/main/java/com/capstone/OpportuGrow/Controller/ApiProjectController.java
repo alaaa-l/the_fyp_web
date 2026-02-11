@@ -51,7 +51,6 @@ public class ApiProjectController {
                 .category(project.getCategory())
                 .fundingGoal(project.getFundingGoal())
                 .fundingDuration(project.getFundingDuration())
-                .currentFunding(project.getCurrentFunding())
                 .status(project.getStatus())
                 .type(project.getType())
                 .imageUrl(project.getImageUrl())
