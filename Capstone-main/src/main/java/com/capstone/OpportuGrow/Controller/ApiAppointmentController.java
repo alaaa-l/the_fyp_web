@@ -67,7 +67,27 @@ public class ApiAppointmentController {
             return ResponseEntity.ok(successResponse);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(createErrorResponse("An error occurred while fetching appointments"));
+                    .body(createErrorResponse("Error: " + e.getMessage()));
+        }
+    }
+
+    /**
+     * Get appointments for a specific user ID
+     * GET /api/appointments/user/{userId}
+     */
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<?> getUserAppointmentsById(@PathVariable Integer userId) {
+        try {
+            List<AppointmentResponseDto> appointments = appointmentService.getAppointmentsByUserId(userId);
+
+            Map<String, Object> successResponse = new HashMap<>();
+            successResponse.put("success", true);
+            successResponse.put("appointments", appointments);
+
+            return ResponseEntity.ok(successResponse);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(createErrorResponse("Error: " + e.getMessage()));
         }
     }
 

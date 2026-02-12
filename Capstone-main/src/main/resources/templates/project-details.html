@@ -148,9 +148,13 @@
                 <div class="sidebar-card">
                     <h5 class="fw-bold text-navy mb-3">Funding Progress</h5>
                     <h2 class="text-green fw-bold mb-1"
-                        th:text="'$' + ${#numbers.formatDecimal(project.raisedAmount, 0, 'COMMA', 0, 'POINT')}">$0</h2>
-                    <p class="text-muted mb-3">pledged of <span class="fw-bold"
+                        th:text="'$' + ${#numbers.formatDecimal(project.raisedAmount >= project.fundingGoal ? project.fundingGoal : project.raisedAmount, 0, 'COMMA', 0, 'POINT')}">
+                        $0</h2>
+                    <p class="text-muted mb-1">pledged of <span class="fw-bold"
                             th:text="'$' + ${project.fundingGoal}">$0</span></p>
+                    <div th:if="${project.raisedAmount >= project.fundingGoal}" class="mb-3">
+                        <span class="badge bg-secondary w-100 py-2">Funding Goal Reached!</span>
+                    </div>
 
                     <div class="progress mb-3">
                         <div class="progress-bar" th:style="'width:' + ${project.fundingPercent} + '%'"></div>

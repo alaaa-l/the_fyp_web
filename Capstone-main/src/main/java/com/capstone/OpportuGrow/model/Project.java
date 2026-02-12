@@ -154,7 +154,8 @@ public class Project {
     // مثال حساب fundingPercent قبل الإرسال للـ template
     public void calculateFundingPercent() {
         if (this.fundingGoal > 0) {
-            this.fundingPercent = (this.raisedAmount / this.fundingGoal) * 100;
+            double percent = (this.raisedAmount / this.fundingGoal) * 100;
+            this.fundingPercent = Math.min(percent, 100.0);
         } else {
             this.fundingPercent = 0;
         }

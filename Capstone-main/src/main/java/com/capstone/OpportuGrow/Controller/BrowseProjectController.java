@@ -46,14 +46,16 @@ public class BrowseProjectController {
             Principal principal) {
         // Fetch projects according to filters
         List<Project> projects;
+        List<ProjectStatus> visibleStatuses = List.of(ProjectStatus.APPROVED, ProjectStatus.COMPLETED);
+
         if ((keyword == null || keyword.isEmpty()) && type == null) {
-            projects = projectRepository.findByStatus(ProjectStatus.APPROVED);
+            projects = projectRepository.findByStatusIn(visibleStatuses);
         } else if (keyword != null && !keyword.isEmpty() && type != null) {
-            projects = projectRepository.searchApprovedByType(keyword, type);
+            projects = projectRepository.searchVisibleByType(keyword, type);
         } else if (keyword != null && !keyword.isEmpty()) {
-            projects = projectRepository.searchApprovedProjects(keyword);
+            projects = projectRepository.searchVisibleProjects(keyword);
         } else { // type != null
-            projects = projectRepository.findByStatusAndType(ProjectStatus.APPROVED, type);
+            projects = projectRepository.findByStatusInAndType(visibleStatuses, type);
         }
 
         // إذا عندك userRepository

@@ -1,112 +1,402 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - OpportuGrow</title>
+    <title>Member Dashboard - OpportuGrow</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --primary: #2c3e50;
-            --secondary: #3498db;
-            --accent: #2ecc71;
-            --light: #ecf0f1;
-            --gray: #95a5a6;
+            --primary: #2563eb;
+            --secondary: #64748b;
+            --success: #22c55e;
+            --info: #06b6d4;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --glass: rgba(255, 255, 255, 0.7);
         }
-        body { font-family: 'Segoe UI', sans-serif; background: #f8f9fa; padding-top: 70px; }
 
-        /* Dashboard Stats */
-        .stats-card { border-radius: 15px; padding: 20px; color: white; transition: all 0.3s; }
-        .stats-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        .stats-icon { font-size: 2rem; }
-        .stats-title { font-size: 1rem; opacity: 0.8; }
-        .stats-number { font-size: 1.6rem; font-weight: 700; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f1f5f9;
+            color: var(--dark);
+            padding-top: 80px;
+        }
 
-        /* Project Cards */
-        .project-card { border-radius: 15px; overflow: hidden; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: all 0.3s; }
-        .project-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        .project-image { height: 180px; overflow: hidden; position: relative; }
-        .project-image img { width: 100%; height: 100%; object-fit: cover; }
-        .progress-fill { height: 8px; background: var(--accent); border-radius: 4px; }
+        /* Modern Stat Cards */
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        .stat-card {
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .stat-info h6 {
+            font-size: 0.85rem;
+            color: var(--secondary);
+            margin-bottom: 0.2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-info h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0;
+        }
+
+        /* Chart Containers */
+        .chart-box {
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--dark);
+        }
+
+        /* Table Styling */
+        .table-container {
+            padding: 1.5rem;
+            border-radius: 20px;
+        }
+
+        .modern-table {
+            margin-top: 1rem;
+        }
+
+        .modern-table th {
+            border: none;
+            background: #f8fafc;
+            color: var(--secondary);
+            font-weight: 500;
+            font-size: 0.85rem;
+            padding: 1rem;
+        }
+
+        .modern-table td {
+            padding: 1rem;
+            vertical-align: middle;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .status-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Project Grid Enhancement */
+        .project-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: 12px;
+            background: #f8fafc;
+            margin-bottom: 1rem;
+            transition: 0.2s;
+        }
+
+        .project-item:hover {
+            background: #eff6ff;
+        }
+
+        .project-thumb {
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .section-header {
+            margin-bottom: 2rem;
+        }
+
+        .section-header h2 {
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .section-header p {
+            color: var(--secondary);
+        }
     </style>
 </head>
+
 <body>
 
-<!-- Navbar -->
-<div th:replace="fragments/navbar :: navbar"></div>
+    <div th:replace="fragments/navbar :: navbar"></div>
 
-<div class="container">
+    <div class="container pb-5">
 
-    <!-- Dashboard Stats -->
-    <div class="row mb-4 g-4">
-        <div class="col-md-3">
-            <div class="stats-card bg-primary text-center">
-                <i class="fas fa-project-diagram stats-icon"></i>
-                <div class="stats-title">My Projects</div>
-                <div class="stats-number" th:text="${myProjects.size()}">0</div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="stats-card bg-secondary text-center">
-                <i class="fas fa-globe stats-icon"></i>
-                <div class="stats-title">Total Projects</div>
-                <div class="stats-number" th:text="${totalProjects}">0</div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="stats-card bg-success text-center">
-                <i class="fas fa-dollar-sign stats-icon"></i>
-                <div class="stats-title">Total Raised</div>
-                <div class="stats-number" th:text="${totalRaised}">$0</div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="stats-card bg-warning text-center">
-                <i class="fas fa-users stats-icon"></i>
-                <div class="stats-title">Users</div>
-                <div class="stats-number" th:text="${totalUsers}">0</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- User Projects -->
-    <h3 class="mb-3">My Projects</h3>
-    <div class="row g-4">
-        <div th:if="${#lists.isEmpty(myProjects)}" class="col-12">
-            <div class="alert alert-info text-center p-5">
-                <i class="fas fa-info-circle fa-3x mb-3"></i>
-                <h4>No projects yet!</h4>
-                <p>Start creating your first project to showcase your ideas.</p>
-                <a th:href="@{/create-project/choose-type}" class="btn btn-primary">Create Project</a>
-            </div>
+        <div class="section-header">
+            <h2>Welcome back, <span th:text="${#authentication.name}">User</span>!</h2>
+            <p>Here's a detailed overview of your OpportuGrow portfolio.</p>
         </div>
 
-        <div th:each="project : ${myProjects}" class="col-lg-4 col-md-6">
-            <div class="project-card">
-                <div class="project-image">
-                    <img th:if="${project.imageUrl != null}" th:src="@{${project.imageUrl}}" alt="Project Image">
-                    <div th:if="${project.imageUrl == null}" style="width:100%; height:100%; background:linear-gradient(45deg, #3498db, #2ecc71); display:flex; align-items:center; justify-content:center; color:white;">
-                        <i class="fas fa-lightbulb" style="font-size:3rem;"></i>
+        <!-- Stat Cards Row -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-3">
+                <div class="glass-card stat-card">
+                    <div class="stat-icon bg-primary bg-opacity-10 text-primary">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h6>My Projects</h6>
+                        <h3 th:text="${myProjectsCount}">0</h3>
                     </div>
                 </div>
-                <div class="p-3">
-                    <h5 th:text="${project.title}">Project Title</h5>
-                    <p class="mb-2" th:text="${project.shortDescription}">Short description...</p>
-                    <div class="mb-2">
-                        <div class="progress">
-                            <div class="progress-fill" th:style="'width:' + ${project.fundingPercent} + '%'"></div>
+            </div>
+            <div class="col-md-3">
+                <div class="glass-card stat-card">
+                    <div class="stat-icon bg-success bg-opacity-10 text-success">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h6>Raised Amount</h6>
+                        <h3 th:text="'$' + ${#numbers.formatDecimal(myTotalRaised, 0, 'COMMA', 0, 'POINT')}">$0</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="glass-card stat-card">
+                    <div class="stat-icon bg-info bg-opacity-10 text-info">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h6>Platform Success</h6>
+                        <h3 th:text="'$' + ${#numbers.formatDecimal(totalRaised, 0, 'COMMA', 0, 'POINT')}">$0</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="glass-card stat-card">
+                    <div class="stat-icon bg-warning bg-opacity-10 text-warning">
+                        <i class="fas fa-users-viewfinder"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h6>Active Peers</h6>
+                        <h3 th:text="${totalUsers}">0</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="row g-4 mb-5">
+            <!-- Funding Activity (Bar) -->
+            <div class="col-lg-8">
+                <div class="glass-card chart-box">
+                    <div class="chart-header">
+                        <span class="chart-title">Monthly Funding Activity</span>
+                        <div class="dropdown">
+                            <i class="fas fa-ellipsis-v text-muted" style="cursor: pointer;"></i>
                         </div>
-                        <small th:text="${project.fundingPercent} + '%'">0%</small>
                     </div>
-                    <a th:href="@{/projects/{id}(id=${project.id})}" class="btn btn-sm btn-outline-primary w-100">View Project</a>
+                    <canvas id="activityChart" style="max-height: 300px;"></canvas>
+                </div>
+            </div>
+            <!-- Project Distribution (Pie) -->
+            <div class="col-lg-4">
+                <div class="glass-card chart-box">
+                    <div class="chart-header">
+                        <span class="chart-title">Portfolio Mix</span>
+                    </div>
+                    <canvas id="typeChart" style="max-height: 300px;"></canvas>
                 </div>
             </div>
         </div>
+
+        <div class="row g-4 mb-5">
+            <!-- Funding Progress (Doughnut) -->
+            <div class="col-lg-4">
+                <div class="glass-card chart-box">
+                    <div class="chart-header">
+                        <span class="chart-title">Funding Progress States</span>
+                    </div>
+                    <canvas id="progressChart" style="max-height: 300px;"></canvas>
+                </div>
+            </div>
+            <!-- Recent Activity Table -->
+            <div class="col-lg-8">
+                <div class="glass-card table-container">
+                    <div class="chart-header">
+                        <span class="chart-title">Recent Activity</span>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table modern-table">
+                            <thead>
+                                <tr>
+                                    <th>Transaction Type</th>
+                                    <th>Project</th>
+                                    <th>Amount</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="tx : ${recentTransactions}">
+                                    <td>
+                                        <span class="status-badge"
+                                            th:classappend="${tx.type == 'DONATION' ? 'bg-success bg-opacity-10 text-success' : (tx.type == 'INVESTMENT' ? 'bg-primary bg-opacity-10 text-primary' : 'bg-info bg-opacity-10 text-info')}"
+                                            th:text="${tx.type}">Type</span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="fw-medium text-dark"
+                                                th:text="${tx.project.title}">Project</span>
+                                        </div>
+                                    </td>
+                                    <td class="fw-bold" th:text="'$' + ${tx.amount}">$0</td>
+                                    <td class="text-secondary small"
+                                        th:text="${#temporals.format(tx.timestamp, 'dd MMM yyyy, HH:mm')}">Date</td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(recentTransactions)}">
+                                    <td colspan="4" class="text-center py-4 text-muted">No recent transaction activity
+                                        found.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- My Projects List -->
+        <div class="glass-card p-4">
+            <div class="chart-header">
+                <span class="chart-title">Project Summary</span>
+            </div>
+            <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-3">
+                <div th:each="project : ${myProjects}" class="col">
+                    <a th:href="@{/projects/{id}(id=${project.id})}" class="text-decoration-none">
+                        <div class="text-center p-2 rounded-3 hover-bg">
+                            <img th:src="${project.imageUrl != null ? project.imageUrl : 'https://via.placeholder.com/60'}"
+                                class="rounded-3 mb-2 shadow-sm"
+                                style="width: 60px; height: 60px; object-fit: cover; border: 1px solid #e2e8f0;" alt="">
+                            <div class="small fw-medium text-dark text-truncate px-1" th:text="${project.title}">Project
+                                Title</div>
+                        </div>
+                    </a>
+                </div>
+                <div th:if="${#lists.isEmpty(myProjects)}" class="col-12 text-center py-3 text-muted">
+                    No projects to display.
+                </div>
+            </div>
+        </div>
+
     </div>
 
-</div>
+    <!-- Chart Scripts -->
+    <script th:inline="javascript">
+        // 1. Portfolio Mix (Pie)
+        const typeCtx = document.getElementById('typeChart').getContext('2d');
+        new Chart(typeCtx, {
+            type: 'pie',
+            data: {
+                labels: /*[[${typeDistKeys}]]*/[],
+                datasets: [{
+                    data: /*[[${typeDistValues}]]*/[],
+                    backgroundColor: ['#2563eb', '#22c55e', '#f59e0b', '#ef4444', '#06b6d4'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } } },
+                maintainAspectRatio: false
+            }
+        });
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        // 2. Funding Progress (Doughnut)
+        const progressCtx = document.getElementById('progressChart').getContext('2d');
+        new Chart(progressCtx, {
+            type: 'doughnut',
+            data: {
+                labels: /*[[${fundingKeys}]]*/[],
+                datasets: [{
+                    data: /*[[${fundingValues}]]*/[],
+                    backgroundColor: ['#22c55e', '#2563eb', '#06b6d4', '#cbd5e1'],
+                    borderWidth: 0,
+                    cutout: '70%'
+                }]
+            },
+            options: {
+                plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } } },
+                maintainAspectRatio: false
+            }
+        });
+
+        // 3. Monthly Activity (Bar)
+        const activityCtx = document.getElementById('activityChart').getContext('2d');
+        new Chart(activityCtx, {
+            type: 'bar',
+            data: {
+                labels: /*[[${activityKeys}]]*/[],
+                datasets: [{
+                    label: 'Raised Amount ($)',
+                    data: /*[[${activityValues}]]*/[],
+                    backgroundColor: '#2563eb',
+                    borderRadius: 8,
+                    barThickness: 25
+                }]
+            },
+            options: {
+                scales: {
+                    y: { beginAtZero: true, grid: { display: true, color: '#f1f5f9' }, ticks: { font: { size: 10 } } },
+                    x: { grid: { display: false } }
+                },
+                plugins: { legend: { display: false } },
+                maintainAspectRatio: false
+            }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

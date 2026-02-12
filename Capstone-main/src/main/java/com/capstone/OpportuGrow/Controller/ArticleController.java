@@ -75,7 +75,7 @@ public class ArticleController {
         try {
             // The fileURL is saved as "/uploads/articles/filename"
             String fileName = article.getFileUrl().replace("/uploads/articles/", "");
-            Path filePath = Paths.get("C:/og-uploads/").resolve(fileName).normalize();
+            Path filePath = Paths.get("C:/og-uploads/articles/").resolve(fileName).normalize();
             Resource resource = new UrlResource(filePath.toUri());
 
             if (resource.exists()) {

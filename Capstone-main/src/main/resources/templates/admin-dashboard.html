@@ -1,6 +1,8 @@
 <div th:fragment="content">
     <style>
-        .dashboard-wrapper { animation: fadeIn 0.8s ease-out; }
+        .dashboard-wrapper {
+            animation: fadeIn 0.8s ease-out;
+        }
 
         /* Stats Cards Enhanced */
         .stats-grid {
@@ -14,29 +16,47 @@
             background: white;
             padding: 25px;
             border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
             border: 1px solid #f1f5f9;
             transition: transform 0.3s ease;
             position: relative;
             overflow: hidden;
         }
 
-        .stat-card-premium:hover { transform: translateY(-5px); }
+        .stat-card-premium:hover {
+            transform: translateY(-5px);
+        }
 
         .stat-card-premium::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
             background: var(--primary-gradient, #6366f1);
         }
 
-        .stat-label-modern { color: #64748b; font-weight: 600; font-size: 0.9rem; text-transform: uppercase; }
-        .stat-value-modern { font-size: 1.8rem; font-weight: 800; color: #1e293b; margin-top: 5px; }
+        .stat-label-modern {
+            color: #64748b;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        .stat-value-modern {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-top: 5px;
+        }
 
         /* Chart Containers */
         .chart-card {
             background: white;
             border-radius: 24px;
             padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
             border: 1px solid #f1f5f9;
         }
     </style>
@@ -44,23 +64,23 @@
     <div class="dashboard-wrapper">
         <div class="page-header">
             <div class="header-title">
-                <h1>Platform Analytics</h1>
-                <p>Real-time overview of your ecosystem performance</p>
+                <h1>Platform Insights</h1>
+                <p>Real-time data visualization and ecosystem performance</p>
             </div>
         </div>
 
         <div class="stats-grid">
             <div class="stat-card-premium">
-                <div class="stat-label-modern"><i class="bi bi-rocket-takeoff me-2"></i>Total Projects</div>
-                <div class="stat-value-modern" th:text="${totalProjects}">0</div>
+                <div class="stat-label-modern"><i class="bi bi-currency-dollar me-2"></i>Total Revenue</div>
+                <div class="stat-value-modern" th:text="${#numbers.formatCurrency(totalRevenue)}">$0</div>
             </div>
             <div class="stat-card-premium">
-                <div class="stat-label-modern"><i class="bi bi-currency-dollar me-2"></i>Total Raised</div>
-                <div class="stat-value-modern" th:text="${#numbers.formatCurrency(totalRaised)}">$0</div>
+                <div class="stat-label-modern"><i class="bi bi-people me-2"></i>Total Users</div>
+                <div class="stat-value-modern" th:text="${totalUsers}">0</div>
             </div>
             <div class="stat-card-premium">
-                <div class="stat-label-modern"><i class="bi bi-people me-2"></i>Active Users</div>
-                <div class="stat-value-modern" th:text="${activeUsers}">0</div>
+                <div class="stat-label-modern"><i class="bi bi-hourglass-split me-2"></i>Pending Approval</div>
+                <div class="stat-value-modern" th:text="${pendingApproval}">0</div>
             </div>
             <div class="stat-card-premium">
                 <div class="stat-label-modern"><i class="bi bi-graph-up-arrow me-2"></i>Success Rate</div>
@@ -68,20 +88,64 @@
             </div>
         </div>
 
+        <!-- Monthly Performance Section -->
         <div class="row g-4 mb-4">
-            <div class="col-lg-8">
+            <div class="col-lg-6">
                 <div class="chart-card">
-                    <h5 class="mb-4 fw-bold">Growth Trends (Projects vs Funds)</h5>
+                    <h5 class="mb-4 fw-bold">
+                        <i class="bi bi-graph-up me-2" style="color: #6366f1;"></i>
+                        Monthly Performance (Projects & Funds)
+                    </h5>
                     <div style="height: 350px;">
                         <canvas id="lineChart"></canvas>
                     </div>
                 </div>
             </div>
+            <div class="col-lg-6">
+                <div class="chart-card">
+                    <h5 class="mb-4 fw-bold">
+                        <i class="bi bi-people-fill me-2" style="color: #10b981;"></i>
+                        New Users Growth
+                    </h5>
+                    <div style="height: 350px;">
+                        <canvas id="userChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Distribution & Engagement Section -->
+        <div class="row g-4 mb-4">
             <div class="col-lg-4">
                 <div class="chart-card">
-                    <h5 class="mb-4 fw-bold">Project Distribution</h5>
+                    <h5 class="mb-4 fw-bold">
+                        <i class="bi bi-layers-fill me-2" style="color: #8b5cf6;"></i>
+                        Project Types
+                    </h5>
+                    <div style="height: 350px;">
+                        <canvas id="typeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="chart-card">
+                    <h5 class="mb-4 fw-bold">
+                        <i class="bi bi-speedometer2 me-2" style="color: #3b82f6;"></i>
+                        System Status
+                    </h5>
                     <div style="height: 350px;">
                         <canvas id="statusChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="chart-card">
+                    <h5 class="mb-4 fw-bold">
+                        <i class="bi bi-chat-heart-fill me-2" style="color: #f43f5e;"></i>
+                        Engagement Analysis
+                    </h5>
+                    <div style="height: 350px;">
+                        <canvas id="engagementChart"></canvas>
                     </div>
                 </div>
             </div>
@@ -90,17 +154,32 @@
 
     <script th:inline="javascript">
         // بنستخدم هيدا الـ Event لنتأكد إنو الـ DOM صار جاهز والـ Chart.js تحملت
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             try {
-                const projectsData = [[${projectsPerMonth}]] || [];
-                const fundsData = [[${fundsPerMonth}]] || [];
-                const monthsLabels = [[${months}]] || [];
+                const projectsData = /*[[${projectsPerMonth}]]*/[];
+                const fundsData = /*[[${fundsPerMonth}]]*/[];
+                const usersData = /*[[${usersPerMonth}]]*/[];
+                const monthsLabels = /*[[${months}]]*/[];
 
-                const p = [[${pendingProjects}]] || 0;
-                const a = [[${approvedProjects}]] || 0;
-                const r = [[${rejectedProjects}]] || 0;
+                const p = /*[[${pendingProjects}]]*/ 0;
+                const a = /*[[${approvedProjects}]]*/ 0;
+                const r = /*[[${rejectedProjects}]]*/ 0;
 
-                // Line Chart
+                // Project type data for pie chart
+                const charity = /*[[${charityProjects}]]*/ 0;
+                const fund = /*[[${fundProjects}]]*/ 0;
+                const loan = /*[[${loanProjects}]]*/ 0;
+
+                // Status data for doughnut chart
+                const c = /*[[${completedProjects}]]*/ 0;
+
+                // Engagement data for radar chart
+                const likesByType = /*[[${likesByType}]]*/[0, 0, 0];
+                const commentsByType = /*[[${commentsByType}]]*/[0, 0, 0];
+
+
+
+                // Line Chart (Projects & Funds)
                 const lineCtx = document.getElementById("lineChart").getContext("2d");
                 new Chart(lineCtx, {
                     type: "line",
@@ -112,54 +191,269 @@
                                 data: projectsData,
                                 borderColor: "#6366f1",
                                 backgroundColor: "rgba(99,102,241,0.1)",
-                                fill: true,
-                                tension: 0.4,
+                                fill: true, // Area fill
+                                tension: 0.4, // Smooth curve
                                 borderWidth: 3,
-                                pointRadius: 4
+                                pointRadius: 4,
+                                pointBackgroundColor: "#6366f1",
+                                yAxisID: 'y'
                             },
                             {
                                 label: "Funds ($)",
                                 data: fundsData,
                                 borderColor: "#10b981",
                                 backgroundColor: "rgba(16,185,129,0.1)",
-                                fill: true,
-                                tension: 0.4,
+                                fill: true, // Area fill
+                                tension: 0.4, // Smooth curve
                                 borderWidth: 3,
-                                pointRadius: 4
+                                pointRadius: 4,
+                                pointBackgroundColor: "#10b981",
+                                yAxisID: 'y1'
                             }
                         ]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        plugins: { legend: { display: true, position: 'bottom' } },
+                        interaction: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    usePointStyle: true,
+                                    padding: 20,
+                                    font: { family: "'Plus Jakarta Sans', sans-serif", size: 12 }
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(30, 41, 59, 0.9)',
+                                padding: 12,
+                                titleFont: { size: 14, weight: 'bold' },
+                                bodyFont: { size: 13 },
+                                cornerRadius: 8,
+                                displayColors: true
+                            }
+                        },
                         scales: {
-                            y: { grid: { display: false } },
-                            x: { grid: { display: false } }
+                            x: {
+                                grid: { display: false },
+                                ticks: { font: { size: 12 } }
+                            },
+                            y: {
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                                title: { display: true, text: 'Projects' },
+                                grid: { borderDash: [5, 5], color: '#f1f5f9' }
+                            },
+                            y1: {
+                                type: 'linear',
+                                display: true,
+                                position: 'right',
+                                title: { display: true, text: 'Funds ($)' },
+                                grid: { display: false } // Only show grid for left axis
+                            }
                         }
                     }
                 });
 
-                // Status Chart (Doughnut)
-                const statusCtx = document.getElementById("statusChart").getContext("2d");
-                new Chart(statusCtx, {
-                    type: "doughnut",
+                // User Bar Chart
+                const userCtx = document.getElementById("userChart").getContext("2d");
+                new Chart(userCtx, {
+                    type: "bar",
                     data: {
-                        labels: ["Pending", "Approved", "Rejected"],
+                        labels: monthsLabels,
                         datasets: [{
-                            data: [p, a, r],
-                            backgroundColor: ["#f59e0b", "#10b981", "#ef4444"],
-                            hoverOffset: 15,
-                            borderWidth: 0
+                            label: "New Registered Users",
+                            data: usersData,
+                            backgroundColor: "#3b82f6",
+                            borderRadius: 4, // Rounded bars
+                            barPercentage: 0.6,
+                            categoryPercentage: 0.8
                         }]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: {
-                            legend: { position: 'bottom' }
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    usePointStyle: true,
+                                    padding: 20
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(30, 41, 59, 0.9)',
+                                padding: 12
+                            }
                         },
-                        cutout: '70%'
+                        scales: {
+                            x: {
+                                grid: { display: false }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                grid: { borderDash: [5, 5], color: '#f1f5f9' },
+                                ticks: { stepSize: 1 } // Show integer steps for users
+                            }
+                        }
+                    }
+                });
+
+                // Project Types Pie Chart
+                const typeCtx = document.getElementById("typeChart").getContext("2d");
+                new Chart(typeCtx, {
+                    type: "pie",
+                    data: {
+                        labels: ["Charity Projects", "Fund Projects", "Loan Projects"],
+                        datasets: [{
+                            data: [charity, fund, loan],
+                            backgroundColor: ["#ec4899", "#8b5cf6", "#3b82f6"],
+                            borderColor: "#ffffff",
+                            borderWidth: 2,
+                            hoverOffset: 20,
+                            hoverBorderWidth: 3
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    padding: 15,
+                                    font: {
+                                        size: 13,
+                                        weight: '600'
+                                    },
+                                    usePointStyle: true,
+                                    pointStyle: 'circle'
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                padding: 12,
+                                titleFont: { size: 14, weight: 'bold' },
+                                bodyFont: { size: 13 },
+                                callbacks: {
+                                    label: function (context) {
+                                        const label = context.label || '';
+                                        const value = context.parsed || 0;
+                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                        return label + ': ' + value + ' (' + percentage + '%)';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // System Status Doughnut Chart
+                const statusCtx = document.getElementById("statusChart").getContext("2d");
+                new Chart(statusCtx, {
+                    type: "doughnut",
+                    data: {
+                        labels: ["Pending", "Approved", "Completed", "Rejected"],
+                        datasets: [{
+                            data: [p, a, c, r],
+                            backgroundColor: ["#f59e0b", "#10b981", "#3b82f6", "#ef4444"],
+                            borderColor: "#ffffff",
+                            borderWidth: 2,
+                            hoverOffset: 15,
+                            hoverBorderWidth: 3
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    padding: 15,
+                                    font: {
+                                        size: 13,
+                                        weight: '600'
+                                    },
+                                    usePointStyle: true,
+                                    pointStyle: 'circle'
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                padding: 12,
+                                titleFont: { size: 14, weight: 'bold' },
+                                bodyFont: { size: 13 }
+                            }
+                        },
+                        cutout: '65%'
+                    }
+                });
+
+                // Engagement Radar Chart
+                const engagementCtx = document.getElementById("engagementChart").getContext("2d");
+                new Chart(engagementCtx, {
+                    type: "radar",
+                    data: {
+                        labels: ["Charity", "Fund", "Loan"],
+                        datasets: [
+                            {
+                                label: "Likes",
+                                data: likesByType,
+                                backgroundColor: "rgba(244, 63, 94, 0.2)", // Rose
+                                borderColor: "#f43f5e",
+                                pointBackgroundColor: "#f43f5e",
+                                pointBorderColor: "#fff",
+                                pointHoverBackgroundColor: "#fff",
+                                pointHoverBorderColor: "#f43f5e",
+                                borderWidth: 2
+                            },
+                            {
+                                label: "Comments",
+                                data: commentsByType,
+                                backgroundColor: "rgba(59, 130, 246, 0.2)", // Blue
+                                borderColor: "#3b82f6",
+                                pointBackgroundColor: "#3b82f6",
+                                pointBorderColor: "#fff",
+                                pointHoverBackgroundColor: "#fff",
+                                pointHoverBorderColor: "#3b82f6",
+                                borderWidth: 2
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    usePointStyle: true,
+                                    padding: 20,
+                                    font: { family: "'Plus Jakarta Sans', sans-serif", size: 12 }
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(30, 41, 59, 0.9)',
+                                padding: 12,
+                                titleFont: { size: 14, weight: 'bold' },
+                                bodyFont: { size: 13 }
+                            }
+                        },
+                        scales: {
+                            r: {
+                                angleLines: { color: '#e2e8f0' },
+                                grid: { color: '#e2e8f0' },
+                                pointLabels: { font: { size: 13, weight: '600' }, color: '#64748b' },
+                                ticks: { backdropColor: 'transparent', color: '#94a3b8' }
+                            }
+                        }
                     }
                 });
             } catch (error) {

@@ -1,6 +1,13 @@
 <div th:fragment="sidebar" xmlns:th="http://www.w3.org/1999/xhtml">
     <div class="sidebar">
-        <h2>Admin</h2>
+        <div class="mb-4 px-3">
+            <h3 class="fw-bold d-flex align-items-center" style="margin: 0; padding-top: 10px;">
+                <i class="bi bi-shield-lock-fill me-2"
+                    style="color: #818cf8; font-size: 1.6rem; filter: drop-shadow(0 0 10px rgba(129, 140, 248, 0.3));"></i>
+                <span
+                    style="background: linear-gradient(to right, #ffffff, #c7d2fe); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; font-family: 'Segoe UI', sans-serif; letter-spacing: 0.5px;">Admin</span>
+            </h3>
+        </div>
         <a th:href="@{/admin/dashboard}" th:classappend="${activePage=='dashboard'} ? 'active'">
             <i class="bi bi-speedometer2"></i> Dashboard
         </a>
@@ -24,4 +31,3 @@
         </a>
     </div>
 </div>
-

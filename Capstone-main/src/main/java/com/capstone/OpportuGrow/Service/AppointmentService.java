@@ -111,20 +111,30 @@ public class AppointmentService {
     }
 
     /**
+     * Get appointments for a specific user ID
+     */
+    public List<AppointmentResponseDto> getAppointmentsByUserId(Integer userId) {
+        List<Appointment> appointments = appointmentRepository.findByUserId(userId);
+        return appointments.stream()
+                .map(this::mapToResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    /**
      * Map Appointment entity to DTO
      */
     private AppointmentResponseDto mapToResponseDto(Appointment appointment) {
         return AppointmentResponseDto.builder()
                 .id(appointment.getId())
-                .consultantId((long) appointment.getConsultant().getId())
-                .consultantName(appointment.getConsultant().getName())
-                .userId(appointment.getUser().getId())
-                .userName(appointment.getUser().getName())
-                .date(appointment.getDate().toString())
-                .time(appointment.getTime().toString())
+                .consultantId(appointment.getConsultant() != null ? (long) appointment.getConsultant().getId() : null)
+                .consultantName(appointment.getConsultant() != null ? appointment.getConsultant().getName() : "Unknown")
+                .userId(appointment.getUser() != null ? appointment.getUser().getId() : null)
+                .userName(appointment.getUser() != null ? appointment.getUser().getName() : "Unknown")
+                .date(appointment.getDate() != null ? appointment.getDate().toString() : null)
+                .time(appointment.getTime() != null ? appointment.getTime().toString() : null)
                 .duration(appointment.getDuration())
                 .topic(appointment.getTopic())
-                .status(appointment.getStatus().toString())
+                .status(appointment.getStatus() != null ? appointment.getStatus().toString() : "PENDING")
                 .notes(appointment.getNotes())
                 .build();
     }
