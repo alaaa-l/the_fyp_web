@@ -71,9 +71,9 @@ public class SecurityConfig {
                                                                 "/member/consultants/**")
                                                 .hasRole("MEMBER")
                                                 .requestMatchers(
+                                                                "/consultant/**",
                                                                 "/consultants/**",
-                                                                "/recommend/**",
-                                                                "/consultant/appointments/**")
+                                                                "/recommend/**")
                                                 .hasRole("CONSULTANT")
                                                 .requestMatchers("/admin/**",
                                                                 "/decision/**",

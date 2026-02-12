@@ -264,7 +264,8 @@
                             <button sec:authorize="isAuthenticated()" type="button"
                                 class="interaction-btn btn-action w-100"
                                 th:classappend="${isCompleted} ? 'btn-secondary opacity-50' : (${project.type.name() == 'CHARITY'} ? 'btn-charity' : (${project.type.name() == 'FUND'} ? 'btn-fund' : 'btn-loan'))"
-                                th:onclick="${isCompleted} ? '' : 'openAmountModal(' + ${project.id} + ')'"
+                                th:data-project-id="${project.id}" th:data-project-type="${project.type}"
+                                th:onclick="${isCompleted} ? '' : 'openAmountModal(this.getAttribute(\'data-project-id\'), this.getAttribute(\'data-project-type\'))'"
                                 th:disabled="${isCompleted}">
                                 <span
                                     th:text="${isCompleted} ? 'Completed' : (${project.type.name() == 'CHARITY'} ? 'Donate' : (${project.type.name() == 'FUND'} ? 'Invest' : 'Loan'))">Action</span>

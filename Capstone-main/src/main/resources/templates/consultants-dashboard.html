@@ -327,7 +327,6 @@
                             <th>Date</th>
                             <th>Time Slot</th>
                             <th>Status</th>
-                            <th class="text-end">Details</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -342,11 +341,6 @@
                                 <span class="status-pill"
                                     th:classappend="${appt.status == 'Confirmed' ? 'bg-confirmed' : 'bg-pending'}"
                                     th:text="${appt.status}">Confirmed</span>
-                            </td>
-                            <td class="text-end">
-                                <a th:href="@{'/consultant/appointment/' + ${appt.id}}" class="btn-action btn-view">
-                                    <i class="fas fa-eye"></i>
-                                </a>
                             </td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(consultant.appointments)}">

@@ -20,12 +20,15 @@ public class DashboardController {
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
     private final TransactionRepository transactionRepository;
+    private final com.capstone.OpportuGrow.Repository.AppointmentRepository appointmentRepository;
 
     public DashboardController(ProjectRepository projectRepository, UserRepository userRepository,
-            TransactionRepository transactionRepository) {
+            TransactionRepository transactionRepository,
+            com.capstone.OpportuGrow.Repository.AppointmentRepository appointmentRepository) {
         this.projectRepository = projectRepository;
         this.userRepository = userRepository;
         this.transactionRepository = transactionRepository;
+        this.appointmentRepository = appointmentRepository;
     }
 
     @GetMapping("/dashboard")
@@ -45,6 +48,13 @@ public class DashboardController {
         long totalProjects = projectRepository.count();
         long totalUsers = userRepository.count();
         double totalRaised = projectRepository.findAll().stream().mapToDouble(Project::getRaisedAmount).sum();
+
+        // New Stats for Dashboard Cards
+        long approvedAppointmentsCount = appointmentRepository.countByUserAndStatus(user,
+                com.capstone.OpportuGrow.model.AppointmentStatus.APPROVED);
+        long completedProjectsCount = myProjects.stream()
+                .filter(p -> p.getStatus() == com.capstone.OpportuGrow.model.ProjectStatus.COMPLETED)
+                .count();
 
         // --- Chart Data Calculations ---
 
@@ -101,6 +111,8 @@ public class DashboardController {
         model.addAttribute("totalProjects", totalProjects);
         model.addAttribute("totalUsers", totalUsers);
         model.addAttribute("totalRaised", totalRaised);
+        model.addAttribute("approvedAppointmentsCount", approvedAppointmentsCount);
+        model.addAttribute("completedProjectsCount", completedProjectsCount);
 
         // Chart attributes
         model.addAttribute("typeDistKeys", projectTypeDist.keySet());

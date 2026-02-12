@@ -186,7 +186,9 @@ public class ConsultantController {
     @GetMapping("/consultant/create")
     public String showCreateArticle(Model model) {
         model.addAttribute("article", new Article());
-        model.addAttribute("types", ArticleType.values());
+        model.addAttribute("types", java.util.Arrays.stream(ArticleType.values())
+                .filter(type -> type != ArticleType.VIDEO)
+                .collect(java.util.stream.Collectors.toList()));
         return "consultant-article-create";
     }
 

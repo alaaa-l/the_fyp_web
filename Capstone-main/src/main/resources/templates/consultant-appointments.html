@@ -3,179 +3,339 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Manage Appointments | OpportuGrow</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Requests | Opportunity Grow</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
     <style>
         :root {
-            --primary: #0d3b2a;
-            --accent: #52b788;
-            --light-bg: #f4f7f6;
+            --sidebar-width: 280px;
+            --primary-bg: #f4f7fe;
+            --accent: #4318ff;
+            --text-main: #1b2559;
+            --text-secondary: #a3aed0;
+            --card-shadow: 0px 18px 40px rgba(112, 144, 176, 0.12);
         }
 
         body {
-            background-color: var(--light-bg);
-            font-family: 'Inter', sans-serif;
-            padding-top: 80px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
         }
 
-        .manage-card {
+        /* --- Sidebar Static Navigation --- */
+        .sidebar-static {
+            width: var(--sidebar-width);
             background: white;
-            border-radius: 20px;
-            padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding: 40px 25px;
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
         }
 
-        .table {
+        .brand-logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--accent);
+            text-align: center;
+            margin-bottom: 50px;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 20px;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0;
+            flex-grow: 1;
+        }
+
+        .nav-item {
+            margin-bottom: 15px;
+        }
+
+        .nav-link-custom {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 20px;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 600;
+            border-radius: 15px;
+            transition: 0.3s;
+        }
+
+        .nav-link-custom:hover,
+        .nav-link-custom.active {
+            background: var(--primary-bg);
+            color: var(--accent);
+        }
+
+        .nav-link-custom i {
+            font-size: 1.2rem;
+        }
+
+        /* --- Main Content Area --- */
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+            padding: 40px;
+        }
+
+        /* --- Profile Header Card --- */
+        .profile-header-card {
+            background: white;
+            border-radius: 30px;
+            padding: 30px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .avatar-container {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #4318ff, #b4a5ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: 800;
+            overflow: hidden;
+        }
+
+        .avatar-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* --- Tables --- */
+        .table-container {
+            background: white;
+            border-radius: 30px;
+            padding: 30px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .modern-table {
+            width: 100%;
             vertical-align: middle;
         }
 
-        .btn-approve {
-            background: var(--accent);
-            color: white;
-            border-radius: 8px;
+        .modern-table thead th {
+            color: var(--text-secondary);
             font-weight: 600;
-            border: none;
-            padding: 0.5rem 1.2rem;
-            transition: 0.3s;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 15px;
         }
 
-        .btn-approve:hover {
-            background: #40916c;
-            transform: translateY(-2px);
-            color: white;
-        }
-
-        .btn-reject {
-            background: #e63946;
-            color: white;
-            border-radius: 8px;
-            font-weight: 600;
-            border: none;
-            padding: 0.5rem 1.2rem;
-            transition: 0.3s;
-        }
-
-        .btn-reject:hover {
-            background: #d62828;
-            transform: translateY(-2px);
-            color: white;
-        }
-
-        .status-badge {
-            padding: 5px 15px;
-            border-radius: 50px;
+        .status-pill {
+            padding: 6px 16px;
+            border-radius: 12px;
             font-size: 0.8rem;
             font-weight: 700;
         }
 
-        .badge-pending {
-            background: #fff3cd;
-            color: #856404;
+        .bg-pending {
+            background: #fffaf0;
+            color: #dd6b20;
+        }
+
+        .btn-approve {
+            background: #e6fffa;
+            color: #00b5ad;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            transition: 0.3s;
+        }
+
+        .btn-approve:hover {
+            background: #00b5ad;
+            color: white;
+        }
+
+        .btn-reject {
+            background: #fff5f5;
+            color: #e53e3e;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            transition: 0.3s;
+        }
+
+        .btn-reject:hover {
+            background: #e53e3e;
+            color: white;
+        }
+
+        @media (max-width: 992px) {
+            .sidebar-static {
+                width: 80px;
+                padding: 20px 10px;
+            }
+
+            .sidebar-static .brand-logo,
+            .sidebar-static span {
+                display: none;
+            }
+
+            .main-wrapper {
+                margin-left: 80px;
+                width: calc(100% - 80px);
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    <div class="sidebar-static">
+        <div class="brand-logo">OG GROW</div>
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="/consultants/dashboard" class="nav-link-custom">
+                    <i class="fas fa-th-large"></i> <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/consultant/schedule" class="nav-link-custom">
+                    <i class="fas fa-calendar-alt"></i> <span>Schedule</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/consultant/appointments" class="nav-link-custom active">
+                    <i class="fas fa-tasks"></i> <span>Manage Requests</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/consultant/create" class="nav-link-custom">
+                    <i class="fas fa-paper-plane"></i> <span>Post Article</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/consultant/profile/edit" class="nav-link-custom">
+                    <i class="fas fa-user-cog"></i> <span>Settings</span>
+                </a>
+            </li>
+        </ul>
+        <a href="/consultant/logout" class="nav-link-custom text-danger">
+            <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+        </a>
+    </div>
 
-    <div class="container py-5">
-        <div class="row">
-            <div class="col-12">
-                <nav aria-label="breadcrumb" class="mb-4">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a th:href="@{/consultants/dashboard}">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Manage Appointments</li>
-                    </ol>
-                </nav>
+    <div class="main-wrapper">
 
-                <div class="manage-card">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h3 class="fw-bold m-0" style="color: var(--primary)">Pending Appointments</h3>
-                        <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill"
-                            th:text="${#lists.size(appointments)} + ' Request(s)'">0 Requests</span>
-                    </div>
+        <div class="profile-header-card" th:if="${consultant != null}">
+            <div class="d-flex align-items-center gap-4">
+                <div class="avatar-container">
+                    <img th:if="${consultant.profileImage != null}" th:src="@{'/uploads/' + ${consultant.profileImage}}"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                        alt="Profile Picture">
 
-                    <div th:if="${param.success == 'approved'}" class="alert alert-success alert-dismissible fade show"
-                        role="alert">
-                        Appointment approved successfully!
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                    <div th:if="${param.success == 'rejected'}" class="alert alert-warning alert-dismissible fade show"
-                        role="alert">
-                        Appointment rejected.
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-
-                    <div class="table-responsive">
-                        <table class="table table-hover border-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th class="border-0 px-4">Member</th>
-                                    <th class="border-0">Date & Time</th>
-                                    <th class="border-0">Duration</th>
-                                    <th class="border-0">Topic</th>
-                                    <th class="border-0">Status</th>
-                                    <th class="border-0 text-center">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr th:each="appointment : ${appointments}">
-                                    <td class="px-4">
-                                        <div class="d-flex align-items-center gap-3">
-                                            <div class="bg-light rounded-circle d-flex align-items-center justify-content-center"
-                                                style="width: 40px; height: 40px;">
-                                                <i class="fas fa-user text-muted"></i>
-                                            </div>
-                                            <div>
-                                                <div class="fw-bold" th:text="${appointment.user.name}">Member Name
-                                                </div>
-                                                <div class="small text-muted" th:text="${appointment.user.email}">
-                                                    email@member.com</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div th:text="${#temporals.format(appointment.date, 'MMM dd, yyyy')}">Date</div>
-                                        <div class="small text-muted" th:text="${appointment.time}">Time</div>
-                                    </td>
-                                    <td>
-                                        <span class="badge bg-light text-dark fw-normal px-2 py-1"
-                                            th:text="${appointment.duration} + ' mins'">30 mins</span>
-                                    </td>
-                                    <td th:text="${appointment.topic}">Topic description</td>
-                                    <td>
-                                        <span class="status-badge badge-pending">PENDING</span>
-                                    </td>
-                                    <td class="text-center">
-                                        <div class="d-flex justify-content-center gap-2">
-                                            <form
-                                                th:action="@{'/consultant/appointments/' + ${appointment.id} + '/approve'}"
-                                                method="post">
-                                                <button type="submit" class="btn-approve">Approve</button>
-                                            </form>
-                                            <form
-                                                th:action="@{'/consultant/appointments/' + ${appointment.id} + '/reject'}"
-                                                method="post">
-                                                <button type="submit" class="btn-reject">Reject</button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div th:if="${#lists.isEmpty(appointments)}" class="text-center py-5">
-                        <i class="fas fa-calendar-check fa-4x mb-3 text-muted opacity-25"></i>
-                        <h5 class="text-muted">No pending requests</h5>
-                        <p class="small text-secondary">Check back later for new booking requests.</p>
-                    </div>
+                    <span th:style="${consultant.profileImage != null} ? 'display:none' : 'display:flex'"
+                        th:text="${consultant.name.substring(0,1)}">C</span>
+                </div>
+                <div>
+                    <h4 class="fw-bold mb-1" th:text="${consultant.name}">Consultant Name</h4>
+                    <p class="text-secondary mb-0">Manage your appointment requests</p>
                 </div>
             </div>
+            <div class="d-flex gap-3">
+                <button class="btn btn-light rounded-4 p-3"><i class="fas fa-bell"></i></button>
+            </div>
         </div>
+
+        <div th:if="${param.success == 'approved'}"
+            class="alert alert-success alert-dismissible fade show mb-4 rounded-4" role="alert">
+            <i class="fas fa-check-circle me-2"></i> Appointment approved successfully!
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${param.success == 'rejected'}"
+            class="alert alert-warning alert-dismissible fade show mb-4 rounded-4" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i> Appointment rejected.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div class="table-container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="fw-bold m-0">Pending Appointment Requests</h5>
+                <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2"
+                    th:text="${#lists.size(appointments)} + ' Request(s)'">0 Requests</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table modern-table border-0">
+                    <thead>
+                        <tr>
+                            <th>Member</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Topic</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="appt : ${appointments}">
+                            <td class="fw-bold">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="bg-light rounded-circle d-flex align-items-center justify-content-center"
+                                        style="width: 32px; height: 32px;">
+                                        <i class="fas fa-user text-muted small"></i>
+                                    </div>
+                                    <span th:text="${appt.user.name}">User Name</span>
+                                </div>
+                            </td>
+                            <td class="text-secondary" th:text="${appt.date}">2026-02-04</td>
+                            <td>
+                                <span class="badge bg-light text-primary border p-2 px-3" th:text="${appt.time}">10:00
+                                    AM</span>
+                            </td>
+                            <td class="text-secondary small" th:text="${appt.topic}">Topic description</td>
+                            <td class="text-center">
+                                <div class="d-flex justify-content-center gap-2">
+                                    <form th:action="@{'/consultant/appointments/' + ${appt.id} + '/approve'}"
+                                        method="post">
+                                        <button type="submit" class="btn-approve">Approve</button>
+                                    </form>
+                                    <form th:action="@{'/consultant/appointments/' + ${appt.id} + '/reject'}"
+                                        method="post">
+                                        <button type="submit" class="btn-reject">Reject</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(appointments)}">
+                            <td colspan="5" class="text-center py-5 text-muted">
+                                <i class="fas fa-calendar-check d-block mb-3"
+                                    style="font-size: 2rem; opacity: 0.3;"></i>
+                                No pending requests at the moment.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

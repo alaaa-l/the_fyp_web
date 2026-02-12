@@ -1,5 +1,6 @@
 package com.capstone.OpportuGrow.Controller;
 
+import com.capstone.OpportuGrow.Repository.AppointmentRepository;
 import com.capstone.OpportuGrow.Repository.ProjectRepository;
 import com.capstone.OpportuGrow.Repository.TransactionRepository;
 import com.capstone.OpportuGrow.Repository.UserRepository;
@@ -24,12 +25,14 @@ public class AdminController {
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
     private final TransactionRepository transactionRepository;
+    private final AppointmentRepository appointmentRepository;
 
     public AdminController(UserRepository userRepository, ProjectRepository projectRepository,
-            TransactionRepository transactionRepository) {
+            TransactionRepository transactionRepository, AppointmentRepository appointmentRepository) {
         this.userRepository = userRepository;
         this.projectRepository = projectRepository;
         this.transactionRepository = transactionRepository;
+        this.appointmentRepository = appointmentRepository;
     }
 
     @GetMapping("/dashboard")
@@ -128,6 +131,30 @@ public class AdminController {
 
         model.addAttribute("likesByType", likesByType);
         model.addAttribute("commentsByType", commentsByType);
+
+        // Contribution amounts by Project Type
+        double charityContributions = 0, fundContributions = 0, loanContributions = 0;
+        for (Transaction t : transactions) {
+            if (t.getProject() != null && t.getProject().getType() != null) {
+                if (t.getProject().getType() == ProjectType.CHARITY)
+                    charityContributions += t.getAmount();
+                else if (t.getProject().getType() == ProjectType.FUND)
+                    fundContributions += t.getAmount();
+                else if (t.getProject().getType() == ProjectType.LOAN)
+                    loanContributions += t.getAmount();
+            }
+        }
+        model.addAttribute("charityContrib", charityContributions);
+        model.addAttribute("fundContrib", fundContributions);
+        model.addAttribute("loanContrib", loanContributions);
+
+        // Appointment stats for Gauge Chart
+        long approvedAppts = appointmentRepository
+                .countByStatus(com.capstone.OpportuGrow.model.AppointmentStatus.APPROVED);
+        long rejectedAppts = appointmentRepository
+                .countByStatus(com.capstone.OpportuGrow.model.AppointmentStatus.REJECTED);
+        model.addAttribute("approvedAppts", approvedAppts);
+        model.addAttribute("rejectedAppts", rejectedAppts);
 
         // Chart data
         model.addAttribute("projectsPerMonth", projectsPerMonth);

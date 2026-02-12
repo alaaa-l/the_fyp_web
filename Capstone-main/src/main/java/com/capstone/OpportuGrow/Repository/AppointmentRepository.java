@@ -12,13 +12,18 @@ import java.util.List;
 
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
-    List<Appointment> findByConsultantId(int consultantId);
+        List<Appointment> findByConsultantId(int consultantId);
 
-    List<Appointment> findByUserId(int userId);
+        List<Appointment> findByUserId(int userId);
 
-    boolean existsByConsultantIdAndDateAndTime(
-            Long consultantId,
-            LocalDate date,
-            LocalTime time);
+        long countByUserAndStatus(com.capstone.OpportuGrow.model.User user,
+                        com.capstone.OpportuGrow.model.AppointmentStatus status);
+
+        boolean existsByConsultantIdAndDateAndTime(
+                        Long consultantId,
+                        LocalDate date,
+                        LocalTime time);
+
+        long countByStatus(com.capstone.OpportuGrow.model.AppointmentStatus status);
 
 }

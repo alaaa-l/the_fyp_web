@@ -138,6 +138,7 @@ public class AppointmentController {
                 .toList();
 
         model.addAttribute("appointments", pendingAppointments);
+        model.addAttribute("consultant", consultant);
         return "consultant-appointments";
     }
 

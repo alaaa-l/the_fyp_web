@@ -210,8 +210,8 @@
                         <i class="fas fa-chart-line"></i>
                     </div>
                     <div class="stat-info">
-                        <h6>Platform Success</h6>
-                        <h3 th:text="'$' + ${#numbers.formatDecimal(totalRaised, 0, 'COMMA', 0, 'POINT')}">$0</h3>
+                        <h6>Set Appointments</h6>
+                        <h3 th:text="${approvedAppointmentsCount}">0</h3>
                     </div>
                 </div>
             </div>
@@ -221,8 +221,8 @@
                         <i class="fas fa-users-viewfinder"></i>
                     </div>
                     <div class="stat-info">
-                        <h6>Active Peers</h6>
-                        <h3 th:text="${totalUsers}">0</h3>
+                        <h6>Goal Completed</h6>
+                        <h3 th:text="${completedProjectsCount}">0</h3>
                     </div>
                 </div>
             </div>
