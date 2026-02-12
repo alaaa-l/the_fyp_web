@@ -1,0 +1,53 @@
+<div th:fragment="content">
+    <div class="card-container">
+        <div class="card-header">
+            <h1><i class="bi bi-lightbulb-fill me-2"></i> Manage Proposals</h1>
+        </div>
+
+        <div class="row g-4">
+            <div th:each="proposal : ${proposals}" class="col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm border-0"
+                    style="border-radius: 15px; overflow: hidden; transition: transform 0.3s;">
+                    <div class="card-body d-flex flex-column p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h5 class="card-title fw-bold text-dark mb-0" th:text="${proposal.title}">Proposal Title
+                            </h5>
+                            <span th:class="'badge rounded-pill ' + 
+                                (${proposal.status.name() == 'APPROVED'} ? 'bg-success' : 
+                                (${proposal.status.name() == 'REJECTED'} ? 'bg-danger' : 'bg-warning text-dark'))"
+                                th:text="${proposal.status}">PENDING</span>
+                        </div>
+
+                        <p class="card-text text-muted small mb-4"
+                            style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;"
+                            th:text="${proposal.idea}">
+                            Proposal idea description...
+                        </p>
+
+                        <div class="mt-auto">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="user-avatar"
+                                    style="width: 30px; height: 30px; font-size: 12px; margin-right: 8px;">
+                                    <span th:text="${#strings.substring(proposal.user.name, 0, 1)}">U</span>
+                                </div>
+                                <small class="text-muted" th:text="${proposal.user.name}">User Name</small>
+                            </div>
+
+                            <a th:href="@{/admin/proposals/{id}(id=${proposal.id})}" class="btn btn-primary w-100"
+                                style="border-radius: 10px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
+                                <i class="bi bi-eye-fill me-2"></i> View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${#lists.isEmpty(proposals)}" class="col-12 text-center py-5">
+                <div class="empty-state">
+                    <i class="bi bi-inbox text-muted display-1"></i>
+                    <h3 class="mt-3 text-muted">No proposals found</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

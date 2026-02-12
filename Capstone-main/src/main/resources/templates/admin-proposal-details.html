@@ -1,0 +1,94 @@
+<div th:fragment="content">
+    <div class="card-container p-4">
+
+        <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+            <a th:href="@{/admin/proposals}" class="text-secondary text-decoration-none">
+                <i class="bi bi-arrow-left me-2"></i> Back to Proposals
+            </a>
+            <span th:class="'badge rounded-pill ' + 
+                (${proposal.status.name() == 'APPROVED'} ? 'bg-success' : 
+                (${proposal.status.name() == 'REJECTED'} ? 'bg-danger' : 'bg-warning text-dark'))"
+                th:text="${proposal.status}" style="font-size: 1rem; padding: 10px 20px;">PENDING</span>
+        </div>
+
+        <div class="row">
+            <!-- Left Column: Proposal Details -->
+            <div class="col-lg-8">
+                <h1 class="fw-bold mb-4" th:text="${proposal.title}">Proposal Title</h1>
+
+                <div class="card shadow-sm border-0 mb-4 p-4" style="border-radius: 15px;">
+                    <h5 class="text-muted text-uppercase small fw-bold mb-3"><i class="bi bi-lightbulb me-2"></i> idea
+                        Description</h5>
+                    <p class="lead" style="white-space: pre-line;" th:text="${proposal.idea}">Full proposal description
+                        goes here...</p>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="card shadow-sm border-0 p-3 h-100" style="border-radius: 12px;">
+                            <small class="text-muted text-uppercase fw-bold mb-1">My Budget</small>
+                            <h4 class="fw-bold text-primary mb-0"
+                                th:text="'$' + ${#numbers.formatDecimal(proposal.myBudget, 0, 2)}">$0.00</h4>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card shadow-sm border-0 p-3 h-100" style="border-radius: 12px;">
+                            <small class="text-muted text-uppercase fw-bold mb-1">Estimated Budget</small>
+                            <h4 class="fw-bold text-success mb-0"
+                                th:text="'$' + ${#numbers.formatDecimal(proposal.estimatedBudget, 0, 2)}">$0.00</h4>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm border-0 mb-4 p-4" style="border-radius: 15px;">
+                    <h5 class="text-muted text-uppercase small fw-bold mb-3"><i class="bi bi-geo-alt me-2"></i> Location
+                        & Contact</h5>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2"><i class="bi bi-geo-alt-fill text-danger me-2"></i> <span
+                                th:text="${proposal.location}">Location</span></li>
+                        <li class="mb-2"><i class="bi bi-laptop text-info me-2"></i> Online Capability: <span
+                                th:text="${proposal.canBeOnline ? 'Yes' : 'No'}" class="fw-bold">Yes/No</span></li>
+                        <li class="mb-2"><i class="bi bi-envelope-fill text-warning me-2"></i> <span
+                                th:text="${proposal.contactInfo}">Contact Info</span></li>
+                        <li><i class="bi bi-tag-fill text-secondary me-2"></i> Category: <span
+                                th:text="${proposal.category}" class="badge bg-light text-dark border">Category</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Right Column: User Info & Actions -->
+            <div class="col-lg-4">
+                <div class="card shadow-sm border-0 mb-4 p-4 text-center" style="border-radius: 15px;">
+                    <div class="user-avatar mx-auto mb-3" style="width: 80px; height: 80px; font-size: 32px;">
+                        <span th:text="${#strings.substring(proposal.user.name, 0, 1)}">U</span>
+                    </div>
+                    <h5 class="fw-bold" th:text="${proposal.user.name}">User Name</h5>
+                    <p class="text-muted small" th:text="${proposal.user.email}">user@example.com</p>
+                    <hr>
+                    <div class="d-grid gap-2">
+                        <form th:action="@{/admin/proposals/approve/{id}(id=${proposal.id})}" method="post"
+                            th:if="${proposal.status.name() == 'PENDING' || proposal.status.name() == 'REJECTED'}">
+                            <button type="submit" class="btn btn-success w-100 py-2 fw-bold"
+                                style="border-radius: 10px;">
+                                <i class="bi bi-check-circle-fill me-2"></i> Approve Proposal
+                            </button>
+                        </form>
+
+                        <form th:action="@{/admin/proposals/reject/{id}(id=${proposal.id})}" method="post"
+                            th:if="${proposal.status.name() == 'PENDING' || proposal.status.name() == 'APPROVED'}">
+                            <button type="submit" class="btn btn-danger w-100 py-2 fw-bold"
+                                style="border-radius: 10px;">
+                                <i class="bi bi-x-circle-fill me-2"></i> Reject Proposal
+                            </button>
+                        </form>
+
+                        <div th:if="${proposal.status.name() != 'PENDING'}" class="alert alert-info mt-2 mb-0">
+                            Proposal is <strong th:text="${proposal.status}">STATUS</strong>.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
